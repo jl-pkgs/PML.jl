@@ -67,6 +67,14 @@ theta0 = collect(par0)
 # parRanges = get_bounds(par0)
 theta2par(theta) = Param_PMLV2(theta...)
 
+function theta2param(params::Vector{Vector{T}}, IGBPs) where {T<:Real}
+  parNames = fieldnames(Param_PMLV2) |> collect
+  mat_param = map(collect, params) |> x -> cat(x..., dims=2) |> transpose
+  d_param = DataFrame(mat_param, parNames)
+  d_param.IGBP = IGBPs
+  d_param[:, Cols(:IGBP, 1:end)]
+end
+
 export bounds, Param_PMLV2
 export parRanges, parNames, theta0, par0, hc_raw
-export param_PML, theta2par;
+export param_PML, theta2par, theta2param

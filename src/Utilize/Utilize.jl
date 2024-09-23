@@ -1,5 +1,4 @@
 include("DataType.jl")
-include("Params.jl")
 include("PMLV2_sites.jl")
 include("model_calib.jl")
 include("model_gof.jl")

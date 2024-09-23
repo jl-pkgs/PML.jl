@@ -24,8 +24,8 @@
 3. Kong Dongdong, 2019, ISPRS
 """
 function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
-  Ω::T=T(1.0),
-  Pa=atm, Ca=380.0;
+  Pa=atm, Ca=380.0, 
+  Ω::T=T(1.0);
   # leaf::AbstractLeaf, 
   par::Param_PMLV2=Param_PMLV2(),
   r::Union{Nothing,interm_PML}=nothing) where {T<:Real}
@@ -56,8 +56,8 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   # ρa = cal_rho_a(Tavg, q, Pa)
   LEca = (ρa * Cp * 1e6 * r.Ga * VPD / γ) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2, `Cp*1e6`: [J kg-1 °C-1]
 
-  r.Ecr = W2mm(LEcr; lambda=λ) # [W m-2] change to [mm d-1]
-  r.Eca = W2mm(LEca; lambda=λ) # [W m-2] change to [mm d-1]
+  r.Ecr = W2mm(LEcr; λ) # [W m-2] change to [mm d-1]
+  r.Eca = W2mm(LEca; λ) # [W m-2] change to [mm d-1]
   r.Ec = r.Ecr + r.Eca
 
   ## TODO: 补充冰面蒸发的计算
@@ -69,6 +69,8 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   # GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, Eeq, ET_water, Ga, Gc_w
 end
 
+# lambda: [MJ kg-1]
+# W2mm(Ra; lambda) = Ra * 86400 / 1e6 / lambda
 
 """
 # Arguments

@@ -1,18 +1,15 @@
-function θ2param(params::Vector{Vector{T}}, IGBPs) where {T<:Real}
-  parNames = fieldnames(Param_PMLV2) |> collect
-  mat_param = map(collect, params) |> x -> cat(x..., dims=2) |> transpose
-  d_param = DataFrame(mat_param, parNames)
-  return cbind(DataFrame(IGBP=IGBPs), d_param)
-end
 
+function calib_PML(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
+  vars = ["IGBPname", "IGBPcode", "site", "date", "GPP_obs", "ET_obs",
+    "Prcp", "Tavg", "U2", "Rn", "Rs", "VPD", "LAI", "Pa", "Ca"]
+  IGBPs = unique_sort(data.IGBPname)
 
-function calib_PML(data::AbstractDataFrame; of_gof=:KGE, maxn=5000)
   @time params = par_map(IGBP -> begin
       df = data[data.IGBP.==IGBP, vars]
       IGBPcode = df.IGBPcode[1]
       theta, _, _ = model_calib(df, par0; IGBPcode, of_gof, maxn, verbose=false)
       theta
-    end, IGBPs)
+    end, IGBPs; progress=false)
 
   # printstyled("[i=$i, IGBP = $IGBP] \n", bold=true, color=:green, underline=false)
   res = map(i -> begin
@@ -28,17 +25,20 @@ function calib_PML(data::AbstractDataFrame; of_gof=:KGE, maxn=5000)
   df_out = melt_list(res; IGBP=IGBPs)
 
   gof = model_gof(df_out)
-  (; param=θ2param(params, IGBPs), gof, output=df_out)
+  (; param=theta2param(params, IGBPs), gof, output=df_out)
 end
 
-
-data.LAI .= data.LAI_raw
+# data.LAI .= data.LAI_raw
 # data.LAI .= data.LAI_sgfitw
 # data.LAI .= data.LAI_whit
 
 # data = @rename(data, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
-r = calib_PML(data; of_gof=:KGE, maxn=5000)
+r = calib_PML(data; of_gof=:KGE, maxn=500)
 r.gof
+
+# out = fread("D:/GitHub/PML/PMLV2_Kong2019.m/OUTPUT/PMLv2_flux102_Cal_flux_v012.csv")
+# out = @rename(out, ET = ETsim, GPP = GPPsim, ET_obs = ETobs, GPP_obs = GPPobs)
+# model_gof(out)
 
 ## LAI_raw
 #     NSE       R2        KGE
