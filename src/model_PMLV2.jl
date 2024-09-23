@@ -69,8 +69,6 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   # GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, Eeq, ET_water, Ga, Gc_w
 end
 
-# lambda: [MJ kg-1]
-# W2mm(Ra; lambda) = Ra * 86400 / 1e6 / lambda
 
 """
 # Arguments

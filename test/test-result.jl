@@ -15,7 +15,9 @@ r = PMLV2_sites(df; par)
 GOF(df_out.ETsim, r.ET)
 
 GOF(df_out.ETsim, r.ET)
-GOF(df_out.ETsim, r.ET)
+GOF(df_out.Ei, r.Ei)
+GOF(df_out.Ec, r.Ec)
+GOF(df_out.Es, r.Es)
 
 # 蒸发部分，仍然不能完全匹配上，仍需要核对
 df_out.ETsim - r.ET
