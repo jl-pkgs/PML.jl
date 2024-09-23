@@ -1,24 +1,5 @@
 """
-# References
-1. van Dijk, A.I.J.M, 2001, Eq2.
-"""
-function cal_Ei_Dijk2021(Prcp::T, LAI::T, par::Param_PMLV2) where {T<:Real}
-  # two params in Ei
-  # @unpack S_sls, fER0 = par
-  LAIref = 5
-  # van Dijk, A.I.J.M, 2001, Eq2.
-  fveg = 1 - exp(-LAI / LAIref)  # Canopy cover fraction, Eq.1
-  Sveg = par.S_sls * LAI # Specific leaf storage, Eq.2
-  fER = par.fER0 * fveg # the value of 0.50 based on optimisation at Australian catchments
-  Pwet = -log(1 - par.fER0) / par.fER0 * Sveg / fveg # -log(1 - fER /fveg),
-
-  # Pwet[is.na(Pwet)] = 0; check, negative value, log will give error
-  Ei = Prcp < Pwet ? fveg * Prcp : (fveg * Pwet + fER * (Prcp - Pwet))
-  Ei
-end
-
-"""
-  PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model
+    PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model
 
 # Arguments
 
@@ -42,7 +23,7 @@ end
 3. Kong Dongdong, 2019, ISPRS
 """
 function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
-  Pa=atm, Ca=380.0; 
+  Pa=atm, Ca=380.0;
   par::Param_PMLV2=Param_PMLV2(),
   r::Union{Nothing,interm_PML}=nothing) where {T<:Real}
   r === nothing && (r = interm_PML{T}())
@@ -57,6 +38,10 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   r.GPP, r.Gc_w = photosynthesis(Tavg, Rs, VPD, LAI, Pa, Ca; par)
 
   ### WATER MODULE: ------------------------------------------------------------
+  ## Intercepted Evaporation (Ei)
+  r.Ei = cal_Ei_Dijk2021(Prcp, LAI, par)
+  r.Pi = Prcp - r.Ei # 应扣除这一部分消耗的能量
+
   r.Ga = aerodynamic_conductance(U2, par.hc) # Leuning, 2008, Eq.13, doi:10.1029/2007WR006562
 
   # Transpiration from plant cause by radiation water transfer
@@ -64,17 +49,13 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   LEcr = ϵ * Rn * (1 - Tou) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2
 
   # Transpiration from plant cause by aerodynamic water transfer
-  ρ_a = cal_rho_a(Tavg, Pa)
-  # ρ_a = cal_rho_a(Tavg, q, Pa)
-  LEca = (ρ_a * Cp * 1e6 * r.Ga * VPD / γ) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2, `Cp*1e6`: [J kg-1 °C-1]
+  ρa = cal_rho_a(Tavg, Pa)
+  # ρa = cal_rho_a(Tavg, q, Pa)
+  LEca = (ρa * Cp * 1e6 * r.Ga * VPD / γ) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2, `Cp*1e6`: [J kg-1 °C-1]
 
   r.Ecr = W2mm(LEcr; lambda=λ) # [W m-2] change to [mm d-1]
   r.Eca = W2mm(LEca; lambda=λ) # [W m-2] change to [mm d-1]
   r.Ec = r.Ecr + r.Eca
-
-  ## 5. Intercepted Evaporation (Ei)
-  r.Ei = cal_Ei_Dijk2021(Prcp, LAI, par)
-  r.Pi = Prcp - r.Ei
 
   ## TODO: 补充冰面蒸发的计算
   Evp::T = γ / (Δ + γ) * 6.43 * (1 + 0.536 * U2) * VPD / λ

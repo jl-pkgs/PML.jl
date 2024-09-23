@@ -1,9 +1,7 @@
 ```{julia}
-using Ipaper
-using RTableTools
+using Ipaper, HydroTools
+using DataFrames, RTableTools
 using Test
-using HydroTools
-using DataFrames
 using BenchmarkTools
 
 function replace_miss!(df::AbstractDataFrame, miss=NaN)

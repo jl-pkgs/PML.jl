@@ -1,3 +1,5 @@
+using PML, Test
+
 @testset "ET PMLV2" begin
   Prcp = 2.0 # mm
   Tavg = 20.0
