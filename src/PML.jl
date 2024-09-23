@@ -14,6 +14,6 @@ include("Ei_EvapIntercepted.jl")
 include("Ec_CanopyTrans.jl")
 include("Es_EvapSoil.jl")
 include("photosynthesis.jl")
-include("PMLV2.jl")
+include("model_PMLV2.jl")
 
 end # module PML

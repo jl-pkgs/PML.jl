@@ -1,9 +1,9 @@
-function m_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
+function model_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
   # IGBPcode !== nothing && (par.hc = hc_raw[IGBPcode])
   IGBPcode !== nothing && (theta[end] = hc_raw[IGBPcode]) # the last one is hc
   par = Param_PMLV2(theta...)
   # @show theta
-  
+
   dobs = df[!, [:GPP_obs, :ET_obs]]
   dsim = PMLV2_sites(df; par)
 
@@ -15,7 +15,7 @@ function m_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
   if verbose
     indexes = [:KGE, :NSE, :R2, :RMSE, :bias, :bias_perc]
     info_GPP = info_GPP[indexes] |> round2
-    info_ET  = info_ET[indexes] |> round2
+    info_ET = info_ET[indexes] |> round2
 
     @show info_GPP
     @show info_ET
@@ -27,15 +27,15 @@ end
 
 
 ## 最后一步，参数率定模块
-function m_calib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=nothing, maxn=2500, kw...)
+function model_calib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=nothing, maxn=2500, kw...)
   parRanges = get_bounds(par0)
   theta0 = collect(par0)
   # theta需要是一个vector
-  theta, goal, flag = sceua(theta -> -m_goal(df, theta; IGBPcode, kw...),
+  theta, goal, flag = sceua(theta -> -model_goal(df, theta; IGBPcode, kw...),
     theta0, parRanges[:, 1], parRanges[:, 2]; maxn, kw...)
   theta, goal, flag
 end
 
 
 # rounded_data = NamedTuple((field => round(value) for (field, value) in data))
-export m_goal, m_calib
+export model_goal, model_calib

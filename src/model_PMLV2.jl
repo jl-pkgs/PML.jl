@@ -12,6 +12,7 @@
 - `LAI`  : m2 m-2
 - `Pa`   : kPa
 - `Ca`   : ppm
+- `Ω`    : clamping index, default is 1.0
 
 # Examples
 ```julia
@@ -23,7 +24,9 @@
 3. Kong Dongdong, 2019, ISPRS
 """
 function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
+  Ω::T=T(1.0),
   Pa=atm, Ca=380.0;
+  # leaf::AbstractLeaf, 
   par::Param_PMLV2=Param_PMLV2(),
   r::Union{Nothing,interm_PML}=nothing) where {T<:Real}
   r === nothing && (r = interm_PML{T}())
@@ -65,6 +68,7 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   r
   # GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, Eeq, ET_water, Ga, Gc_w
 end
+
 
 """
 # Arguments
