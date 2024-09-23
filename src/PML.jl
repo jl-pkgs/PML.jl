@@ -11,8 +11,8 @@ import HydroTools: aerodynamic_conductance, cal_rho_a
 include("Utilize/Utilize.jl")
 include("water_constrain.jl")
 include("Ei_EvapIntercepted.jl")
-include("Ec_CanopyTrans.jl")
-include("Es_EvapSoil.jl")
+# include("Ec_CanopyTrans.jl")
+# include("Es_EvapSoil.jl")
 include("photosynthesis.jl")
 include("model_PMLV2.jl")
 

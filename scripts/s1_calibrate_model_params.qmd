@@ -1,100 +1,13 @@
-```{julia}
-using Ipaper, HydroTools, PML
-using DataFrames, RTableTools
-using Test, BenchmarkTools
-
-function replace_miss!(df::AbstractDataFrame, miss=NaN)
-  # colnames = names(df)
-  # num_cols = [name for name in colnames if getDataType(df[!, name]) <: Number]
-  for col in names(df)
-    x = df[!, col]
-    type = getDataType(x)
-
-    if type <: AbstractFloat
-      # replace_miss(x, miss)
-      df[!, col] = drop_missing(x)
-    end
-  end
-  df
-end
-
-f = "data/PMLv2_training_forcing_flux_v20200828 (80%)_102sp.csv"
-data = fread(f)
-replace_miss!(data)
-
-## 处理观测值
-data.GPP_obs = nanmean2.(data.GPP_NT, data.GPP_DT)
-data.ET_obs = W2mm.(data.LE, data.Tavg)
-data.Rn = cal_Rn.(data.Rs, data.Rl_in, data.Tavg, data.Albedo, data.Emiss)
-
-data = @rename(data, Ca = CO2, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
-```
-
-
 # 1. TODO
 
 ## 1.1. 测试参数率定模块
 
 ```{julia}
-vars = ["IGBPname", "IGBPcode", "site", "date", "GPP_obs", "ET_obs",
-  "Prcp", "Tavg", "U2", "Rn", "Rs", "VPD", "LAI", "Pa", "Ca"]
-
-IGBPs = unique_sort(data.IGBPname)
-IGBP = IGBPs[1]
-df = data[data.IGBP.==IGBP, vars]
-printstyled("[IGBP=$IGBP] \n", bold=true, color=:green, underline=true)
-
-# @time theta, goal, flag = m_calib(df; IGBPcode, maxn=2500);
-@time _theta, goal, flag = model_calib(df, par0; IGBPcode=df.IGBPcode[1], maxn=2500);
-
-model_goal(df, _theta; verbose=true)
-
-r = PMLV2_sites(df; par=theta2par(_theta))
-cbind(df[:, [:site, :date, :ET_obs, :GPP_obs]], r)
-
 # @time GOF(dat_obs.GPP, dat_sim.GPP)
 # @time GOF(dat_obs.ET, dat_sim.ET)
 ```
 
 ## 1.2. 参数率定
-
-```{julia}
-## 训练可以改成并行格式
-# for i in eachindex(IGBPs)
-@time params = par_map(IGBP -> begin
-    df = data[data.IGBP.==IGBP, vars]
-    theta, goal, flag = model_calib(df, par0; IGBPcode=df.IGBPcode[1], maxn=2500, verbose=false)
-    theta
-  end, IGBPs)
-```
-
-```{julia}
-# 取回模拟数据
-@time res = map(i -> begin
-    IGBP = IGBPs[i]
-    theta = params[i]
-
-    df = data[data.IGBP.==IGBP, vars]
-
-    printstyled("[i=$i, IGBP = $IGBP] \n", bold=true, color=:green, underline=false)
-    model_goal(df, theta; verbose=true)
-
-    par = theta2par(theta)
-    r = PMLV2_sites(df; par)
-    cbind(df[:, [:site, :date, :ET_obs, :GPP_obs]], r)
-  end, eachindex(params))
-df_out = melt_list(res; IGBP=IGBPs)
-```
-
-
-```{julia}
-GOF(df_out.GPP_obs, df_out.GPP) # 使用`LAI_sgfitw`模拟效果稍好
-GOF(df_out.ET_obs, df_out.ET)   # 0.67
-
-# parNames = fieldnames(Param_PMLV2) |> collect
-# mat_param = map(collect, params) |> x -> cat(x..., dims=2) |> transpose
-# d_param = DataFrame(mat_param, parNames) |> d -> cbind(DataFrame(IGBP=IGBPs), d)
-```
 
 在`8-day`尺度上训练模型
 
@@ -122,5 +35,3 @@ n_valid = 21607)
 # # @btime PMLV2($d.Prcp, $d.Tavg, $d.Rs, $d.Rn, $d.VPD, $d.U2, $LAI, $d.Pa; par, res=$res)
 # # df_out = to_df(res)
 ```
-
-## 2.1. 检验结果的正确性

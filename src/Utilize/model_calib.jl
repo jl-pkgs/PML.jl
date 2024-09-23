@@ -2,13 +2,11 @@ function model_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
   # IGBPcode !== nothing && (par.hc = hc_raw[IGBPcode])
   IGBPcode !== nothing && (theta[end] = hc_raw[IGBPcode]) # the last one is hc
   par = Param_PMLV2(theta...)
-  # @show theta
 
   dobs = df[!, [:GPP_obs, :ET_obs]]
   dsim = PMLV2_sites(df; par)
 
   ## 8-day, yearly, yearly_anom
-  # 1. 8-day
   info_GPP = GOF(dobs.GPP_obs, dsim.GPP)
   info_ET = GOF(dobs.ET_obs, dsim.ET)
 
@@ -27,13 +25,14 @@ end
 
 
 ## 最后一步，参数率定模块
-function model_calib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=nothing, maxn=2500, kw...)
+function model_calib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
   parRanges = get_bounds(par0)
-  theta0 = collect(par0)
-  # theta需要是一个vector
-  theta, goal, flag = sceua(theta -> -model_goal(df, theta; IGBPcode, kw...),
-    theta0, parRanges[:, 1], parRanges[:, 2]; maxn, kw...)
-  theta, goal, flag
+  lower = parRanges[:, 1]
+  upper = parRanges[:, 2]
+  theta0 = collect(par0) # must be vector
+
+  sceua(theta -> -model_goal(df, theta; IGBPcode, of_gof, kw...),
+    theta0, lower, upper; maxn, kw...) # theta, goal, flag
 end
 
 
