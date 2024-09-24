@@ -8,13 +8,15 @@ df.GPP_obs = df.GPPobs
 df.ET_obs = df.ETobs
 
 # ## 模型参数率定
-#nb # %% A slide [markdown] {"slideshow": {"slide_type": "slide"}}
+
+#nb # %% A slide [markdown] {"slideshow": {"slide_type": "fragment"}}
 theta, goal, flag = model_calib(df, par0)
 df_out = PMLV2_sites(df; par=theta2par(theta))
 df_out[1:10, :]
 
 # ## 拟合优度
-#nb %% A slide [code] {"slideshow": {"slide_type": "subslide"}}
+
+#nb %% A slide [code] {"slideshow": {"slide_type": "fragment"}}
 gof = [
   (; var="ET", GOF(df.ET_obs, df_out.ET)...),
   (; var="GPP", GOF(df.GPP_obs, df_out.GPP)...)] |> DataFrame
@@ -22,7 +24,8 @@ DataFrame(gof)
 
 
 # ## 绘图
-#nb # %% A slide [markdown] {"slideshow": {"slide_type": "slide"}}
+
+#nb # %% A slide [markdown] {"slideshow": {"slide_type": "fragment"}}
 using Plots
 gr(framestyle=:box, titlefontsize=12)
 t = df.date

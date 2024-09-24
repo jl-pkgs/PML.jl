@@ -35,10 +35,10 @@ function nanmean2(x::T1, y::T2) where {T1<:Real, T2<:Real}
   end
 end
 
-function replace_miss(x::AbstractVector, miss=NaN)
-  x[ismissing.(x)] .= miss
-  x
-end
+# function replace_miss(x::AbstractVector, miss=NaN)
+#   x[ismissing.(x)] .= miss
+#   x
+# end
 
 function getDataType(x)
   type = eltype(x)

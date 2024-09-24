@@ -1,15 +1,35 @@
-# 1. TODO
-
-## 1.1. 测试参数率定模块
-
 ```{julia}
-# @time GOF(dat_obs.GPP, dat_sim.GPP)
-# @time GOF(dat_obs.ET, dat_sim.ET)
+include("data_PML_2019.jl")
 ```
 
-## 1.2. 参数率定
+```{julia}
+data.LAI .= data.LAI_sgfitw
+# data.LAI .= data.LAI_raw
+# data.LAI .= data.LAI_whit
+# data = @rename(data, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
+r = calib_PML(data; of_gof=:KGE, maxn=5000)
+r.gof
+# out = fread("D:/GitHub/PML/PMLV2_Kong2019.m/OUTPUT/PMLv2_flux102_Cal_flux_v012.csv")
+# out = @rename(out, ET = ETsim, GPP = GPPsim, ET_obs = ETobs, GPP_obs = GPPobs)
+# model_gof(out)
+```
 
-在`8-day`尺度上训练模型
+# LAI_raw
+    NSE       R2        KGE
+ET  0.659226  0.681471  0.823243
+GPP 0.724708  0.730096  0.796629
+
+# LAI_sgfitw
+    NSE       R2        KGE
+ET  0.659226  0.681471  0.823243
+GPP 0.724708  0.730096  0.796629
+
+# LAI_whit
+    NSE       R2        KGE
+ET  0.613259  0.646577  0.803562
+GPP 0.676971  0.682734  0.78375
+
+# 在`8-day`尺度上训练模型
 
 ```julia
 julia> GOF(df_out.GPP_obs, df_out.GPP)
@@ -19,19 +39,4 @@ julia> GOF(df_out.GPP_obs, df_out.GPP)
 julia> GOF(df_out.ET_obs, df_out.ET)
 (NSE = 0.6649426918563545, R2 = 0.68019886318664, KGE = 0.8156453875675587, R = 0.8247416948273198, RMSE = 0.7324277346700488, MAE = 0.4914732035326359, bias = -0.029484677463582167, bias_perc = -1.8958637090078327, 
 n_valid = 21607)
-```
-
-# 2. 清洗驱动
-
-```{julia}
-# # (Prcp, Tavg, U2, Rn, Rs, VPD, LAI, albedo, emiss) = 
-# d = df
-# par = par0
-# res = output_PML{Float64}(; n=nrow(dat));
-
-# ## 在进行滑动平均的时候，需要分站点去执行
-# @time r = PMLV2(d.Prcp, d.Tavg, d.Rs, d.Rn, d.VPD, d.U2, d.LAI, d.Pa; 
-#   par, res);
-# # @btime PMLV2($d.Prcp, $d.Tavg, $d.Rs, $d.Rn, $d.VPD, $d.U2, $LAI, $d.Pa; par, res=$res)
-# # df_out = to_df(res)
 ```
