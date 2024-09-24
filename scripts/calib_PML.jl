@@ -1,4 +1,3 @@
-
 function calib_PML(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
   vars = ["IGBPname", "IGBPcode", "site", "date", "GPP_obs", "ET_obs",
     "Prcp", "Tavg", "U2", "Rn", "Rs", "VPD", "LAI", "Pa", "Ca"]
@@ -33,7 +32,7 @@ end
 # data.LAI .= data.LAI_whit
 
 # data = @rename(data, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
-r = calib_PML(data; of_gof=:KGE, maxn=500)
+r = calib_PML(data; of_gof=:KGE, maxn=5000)
 r.gof
 
 # out = fread("D:/GitHub/PML/PMLV2_Kong2019.m/OUTPUT/PMLv2_flux102_Cal_flux_v012.csv")

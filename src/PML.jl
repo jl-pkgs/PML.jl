@@ -2,10 +2,11 @@ module PML
 
 export PMLV2_sites
 export PMLV2, T_adjust_Vm25, f_VPD_Zhang2019
+export GOF
 
 using DocStringExtensions
 using Parameters, DataFrames
-import HydroTools: cal_rho_a, cal_Uz, ET0_eq, 
+import HydroTools: cal_Uz, ET0_eq, 
   Cp, atm, 
   GOF, sceua
 

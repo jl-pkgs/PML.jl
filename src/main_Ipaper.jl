@@ -2,7 +2,7 @@ using Statistics
 
 round2(x::NamedTuple, digits=3; kw...) = map(val -> round(val; digits), x)
 
-# main script of moving average
+
 function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=win_right) where {T<:Real}
   n = length(y)
   z = zeros(Float64, n)
@@ -11,15 +11,14 @@ function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=wi
     i_beg = max(i - win_left, 1)
     i_end = min(i + win_right, n)
 
-    n_i = 0        # number
-    sum = T(0.0)   # sum of values in window
-
+    count = 0    # number
+    ∑ = T(0.0)   # sum of values in window
     for j in i_beg:i_end
       isnan(y[j]) && continue # skip missing values
-      n_i += 1
-      sum += y[j]
+      count += 1
+      ∑ += y[j]
     end
-    z[i] = n_i > 0 ? sum / n_i : T(NaN)
+    z[i] = count > 0 ? ∑ / count : T(NaN)
   end
   z
 end

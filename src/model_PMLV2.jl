@@ -55,6 +55,7 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   ρa = cal_rho_a(Tavg, Pa)
   # ρa = cal_rho_a(Tavg, q, Pa)
   LEca = (ρa * Cp * 1e6 * r.Ga * VPD / γ) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2, `Cp*1e6`: [J kg-1 °C-1]
+  # [kg m-3] [J kg-1 K-1] [m s-1] [kPa] / [kPa K-1] = [W m-2]
 
   r.Ecr = W2mm(LEcr; λ) # [W m-2] change to [mm d-1]
   r.Eca = W2mm(LEca; λ) # [W m-2] change to [mm d-1]
@@ -67,18 +68,6 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   r.Es_eq = r.Eeq * Tou # Soil evaporation at equilibrium, mm d-1
   r
   # GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, Eeq, ET_water, Ga, Gc_w
-end
-
-
-"""
-# Arguments
-- `kw`: named keyword arguments
-  + `r`: `interm_PML`
-"""
-function PMLV2(d::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw...)
-  PMLV2(d.Prcp, d.Tavg, d.Rs, d.Rn,
-    d.VPD, d.U2, d.LAI,
-    d.Pa, d.Ca; par, kw...) |> to_df
 end
 
 
@@ -118,4 +107,16 @@ function PMLV2(Prcp::V, Tavg::V, Rs::V, Rn::V,
   res.Es .= res.fval_soil .* res.Es_eq
   res.ET .= res.Ec .+ res.Ei .+ res.Es
   res
+end
+
+
+"""
+# Arguments
+- `kw`: named keyword arguments
+  + `r`: `interm_PML`
+"""
+function PMLV2(d::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw...)
+  PMLV2(d.Prcp, d.Tavg, d.Rs, d.Rn,
+    d.VPD, d.U2, d.LAI,
+    d.Pa, d.Ca; par, kw...) |> to_df
 end
