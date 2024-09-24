@@ -1,4 +1,4 @@
-using PML, Test, Ipaper
+using PML, Test, Ipaper, DataFrames
 
 function build_data()
   param = fread("data/CRO/PARAM.csv")
@@ -55,4 +55,12 @@ end
   @time _theta, goal, flag = model_calib(df, par0; IGBPcode=df.IGBPcode[1], maxn=2500)
   goal = model_goal(df, _theta; verbose=true)
   @test goal > 0.55 # mean(KGE_GPP, KGE_ET)
+end
+
+@testset "model_gof" begin
+  d = DataFrame(; IGBP=["CRO", "CRO", "CRO"],
+    ET_obs=[1.0, 2, 3], ET=[0.5, 0.6, 0.7],
+    GPP_obs=[1.0, 2, 3], GPP=[1, 1.5, 2.0])
+  @test size(model_gof(d).ET, 1) == 2
+  @test size(model_gof(d; all=false).ET, 1) == 1
 end
