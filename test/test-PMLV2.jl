@@ -47,3 +47,12 @@ end
   @test GOF(df_out.ET_sim, r.ET).MAE <= 0.015
   @test GOF(df_out.GPP_sim, r.GPP).MAE <= 1E-8
 end
+
+
+@testset "model_calib" begin
+  df.GPP_obs = df.GPPobs
+  df.ET_obs = df.ETobs
+  @time _theta, goal, flag = model_calib(df, par0; IGBPcode=df.IGBPcode[1], maxn=2500)
+  goal = model_goal(df, _theta; verbose=true)
+  @test goal > 0.55 # mean(KGE_GPP, KGE_ET)
+end
