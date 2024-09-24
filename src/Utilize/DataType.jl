@@ -54,14 +54,13 @@ function Base.setindex!(res::output_PML, r::Union{NamedTuple,interm_PML}, t, fie
   end
 end
 
-# function setindex!(res::output_PML, r::Union{NTuple,Vector}, t, fields)
-function Base.setindex!(res::output_PML, r::NTuple, t, fields)
-  for i = eachindex(fields)
-    field = fields[i]
-    x = getfield(res, field)
-    x[t] = r[i]
-  end
-end
+# function Base.setindex!(res::output_PML, r::NTuple, t, fields)
+#   for i = eachindex(fields)
+#     field = fields[i]
+#     x = getfield(res, field)
+#     x[t] = r[i]
+#   end
+# end
 
 
 ## DATATYPE CONVERSION ---------------------------------------------------------

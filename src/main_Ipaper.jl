@@ -23,13 +23,14 @@ function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=wi
   z
 end
 
-function nanmean2(x::Real, y::Real)
+function nanmean2(x::T1, y::T2) where {T1<:Real, T2<:Real}
+  T = promote_type(T1, T2)
   if isnan(x)
-    y
+    T(y)
   elseif isnan(y)
-    x
+    T(x)
   else
-    (x + y) / 2.0
+    (x + y) / 2
   end
 end
 
