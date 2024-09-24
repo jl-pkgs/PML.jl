@@ -2,7 +2,7 @@
 
 julia_version = "1.10.5"
 manifest_format = "2.0"
-project_hash = "11c24b89cba09940ca9c06b36d59659326300e58"
+project_hash = "ad41367f0c1268d709267eae4e76632107e69f71"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -58,10 +58,10 @@ uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.16.0"
 
 [[deps.DataFrames]]
-deps = ["Compat", "DataAPI", "DataStructures", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrecompileTools", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "04c738083f29f86e62c8afc341f0967d8717bdb8"
+deps = ["Compat", "DataAPI", "DataStructures", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrecompileTools", "PrettyTables", "Printf", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
+git-tree-sha1 = "fb61b4812c49343d7ef0b533ba982c46021938a6"
 uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.6.1"
+version = "1.7.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -118,11 +118,11 @@ version = "2.11.1+0"
 
 [[deps.HydroTools]]
 deps = ["DataFrames", "DataStructures", "Dates", "DocStringExtensions", "FieldMetadata", "Parameters", "Printf", "Random", "Reexport", "Statistics", "Test", "UnPack"]
-git-tree-sha1 = "02016aaa78107c244abf6ec7c14c3c34653afcf3"
+git-tree-sha1 = "efdc8aed6b6690ff8f27f56260bd027f31e8b727"
 repo-rev = "master"
 repo-url = "https://github.com/jl-pkgs/HydroTools.jl"
 uuid = "179359cd-bac3-4aa1-bccd-287172463ab0"
-version = "0.1.5"
+version = "0.1.6"
 
 [[deps.InlineStrings]]
 git-tree-sha1 = "45521d31238e87ee9f9732561bfee12d4eebd52d"
