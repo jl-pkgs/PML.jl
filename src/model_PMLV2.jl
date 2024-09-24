@@ -11,8 +11,8 @@
 - `U2`   : m/s
 - `LAI`  : m2 m-2
 - `Pa`   : kPa
-- `Ca`   : ppm
-- `Ω`    : clamping index, default is 1.0
+- `Ca`   : ppm, default `380`
+- `Ω`    : clamping index, default is `1.0`
 
 # Examples
 ```julia
@@ -119,4 +119,20 @@ function PMLV2(d::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw...)
   PMLV2(d.Prcp, d.Tavg, d.Rs, d.Rn,
     d.VPD, d.U2, d.LAI,
     d.Pa, d.Ca; par, kw...) |> to_df
+end
+
+# 相同植被类型多个站点一起的计算
+function PMLV2_sites(df::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw...)
+  sites = df.site
+  grps = unique(sites)
+
+  # ! 这里有优化空间，但程序会写的很复杂
+  res = []
+  for grp in grps
+    inds = sites .== grp
+    d = df[inds, :]
+    r = PMLV2(d; par, kw...)
+    push!(res, r)
+  end
+  vcat(res...)
 end

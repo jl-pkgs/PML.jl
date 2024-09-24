@@ -25,6 +25,10 @@ end
 
 
 ## 最后一步，参数率定模块
+"""
+    model_calib(df::AbstractDataFrame, par0::AbstractETParam; 
+        IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
+"""
 function model_calib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
   parRanges = get_bounds(par0)
   lower = parRanges[:, 1]
@@ -35,6 +39,4 @@ function model_calib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=noth
     theta0, lower, upper; maxn, kw...) # theta, goal, flag
 end
 
-
-# rounded_data = NamedTuple((field => round(value) for (field, value) in data))
 export model_goal, model_calib

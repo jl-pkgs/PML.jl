@@ -1,5 +1,6 @@
 using Statistics
 
+# rounded_data = NamedTuple((field => round(value) for (field, value) in data))
 round2(x::NamedTuple, digits=3; kw...) = map(val -> round(val; digits), x)
 
 
@@ -20,7 +21,7 @@ function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=wi
     end
     z[i] = count > 0 ? ∑ / count : T(NaN)
   end
-  z
+  return z
 end
 
 function nanmean2(x::T1, y::T2) where {T1<:Real, T2<:Real}

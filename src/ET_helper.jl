@@ -65,3 +65,5 @@ cal_rho_a(Tair, Pa) = 3.486 * Pa / 1.01(Tair + 273.15) # kg/m3
 # # 这个是最精确的版本
 # # FAO56, Eq. 3-6
 # cal_TvK(Tair, ea, Pa) = (Tair + K0) * (1 + (1 - epsilon) * ea / Pa)
+
+export cal_Ei_Dijk2021, aerodynamic_conductance
