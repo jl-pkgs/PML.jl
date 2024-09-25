@@ -4,7 +4,7 @@ export PMLV2, PMLV2_sites,
   photosynthesis, cal_Ei_Dijk2021, 
   T_adjust_Vm25, f_VPD_Zhang2019
 export DataFrame, GOF
-export file_FLUXNET_CRO
+export file_FLUXNET_CRO, file_FLUXNET_CRO_USTwt
 
 using DocStringExtensions
 using Parameters, DataFrames
@@ -13,6 +13,7 @@ import HydroTools: cal_Uz, ET0_eq, Cp, atm, GOF, sceua
 ## global data
 dir_proj = "$(@__DIR__)/.."
 file_FLUXNET_CRO = "$dir_proj/data/CRO/FLUXNET_CRO" |> abspath
+file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
 
 
 # lambda: [MJ kg-1]

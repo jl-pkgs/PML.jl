@@ -11,7 +11,7 @@ using Literate
 using Plots # to not capture precompilation output
 
 # generate examples
-EXAMPLE = joinpath(@__DIR__, "..", "examples", "calib_IGBP.jl")
+EXAMPLE = joinpath(@__DIR__, "..", "examples", "CalibOneSite.jl")
 OUTPUT = joinpath(@__DIR__, "src/generated")
 
 preprocess(str) = replace(str, "x = 123" => "y = 321"; count=1)

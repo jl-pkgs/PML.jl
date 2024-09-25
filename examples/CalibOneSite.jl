@@ -4,7 +4,7 @@
 using PML, Ipaper
 
 #nb # %% A slide [markdown] {"slideshow": {"slide_type": "slide"}}
-df_out, df, par = deserialize(file_FLUXNET_CRO)
+df_out, df, par = deserialize(file_FLUXNET_CRO_USTwt)
 df.GPP_obs = df.GPPobs
 df.ET_obs = df.ETobs
 

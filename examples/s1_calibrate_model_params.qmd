@@ -3,11 +3,11 @@ include("data_PML_2019.jl")
 ```
 
 ```{julia}
-data.LAI .= data.LAI_sgfitw
+data.LAI .= data.LAI_sgfitw;
 # data.LAI .= data.LAI_raw
 # data.LAI .= data.LAI_whit
 # data = @rename(data, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
-r = calib_PML(data; of_gof=:KGE, maxn=5000)
+r = calib_PMLV2(data; of_gof=:KGE, maxn=5000)
 r.gof
 # out = fread("D:/GitHub/PML/PMLV2_Kong2019.m/OUTPUT/PMLv2_flux102_Cal_flux_v012.csv")
 # out = @rename(out, ET = ETsim, GPP = GPPsim, ET_obs = ETobs, GPP_obs = GPPobs)

@@ -1,8 +1,10 @@
+import Ipaper: par_map
+
 # all sites
 function calib_PMLV2(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
   vars = ["IGBPname", "IGBPcode", "site", "date", "GPP_obs", "ET_obs",
     "Prcp", "Tavg", "U2", "Rn", "Rs", "VPD", "LAI", "Pa", "Ca"]
-  IGBPs = unique_sort(data.IGBPname)
+  IGBPs = unique(data.IGBPname) |> sort
 
   @time params = par_map(IGBP -> begin
       df = data[data.IGBP.==IGBP, vars]
