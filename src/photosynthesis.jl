@@ -14,7 +14,7 @@ function photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T,
   PAR = 0.45 * Rs # W m-2, taken as 0.45 time of solar radiation
   PAR_mol = PAR * 4.57 # 1 W m-2 = 4.57 umol m-2 s-1
 
-  Vm = par.Am_25 * T_adjust_Vm25(Tavg)
+  Vm = par.Am_25 * T_adjust_Vm25(Tavg) # * data$dhour_norm^2 
   Am = Vm # 认为最大光合速率 = 最大羧化能力
 
   P1 = Am * par.Alpha * par.Thelta * PAR_mol
@@ -26,7 +26,7 @@ function photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T,
   Ags = Ca * P1 / (P2 * kQ + P4 * kQ) * (
     kQ * LAI + log((P2 + P3 + P4) / (P2 + P3 * exp(kQ * LAI) + P4))) # umol m-1 s-1
   Ag = Ags  # gross assimilation rate in umol m-2 s-1
-  Ag = Ag * f_VPD_Zhang2019(VPD, par) # * data$dhour_norm^2  # constrained by f_VPD;
+  Ag = Ag * f_VPD_Zhang2019(VPD, par)
 
   GPP = Ag * 86400 / 10^6 * 12 # [umol m-2 s-1] to [g C m-2 d-1]
 

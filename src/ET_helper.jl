@@ -1,3 +1,5 @@
+import HydroTools: cal_slope
+
 """
     cal_Ei_Dijk2021(Prcp::T, LAI::T, par::Param_PMLV2) where {T<:Real}
 
@@ -38,6 +40,28 @@ function aerodynamic_conductance(U2::T, hc::T; Zob=15.0) where {T<:Real}
   uz = cal_Uz(U2, Zob) # convert from u2 to uz
   @fastmath Ga = uz * kmar^2 / (log((Zob - d) / zom) * log((Zob - d) / zoh)) # m s-1
   Ga
+end
+
+
+function ET0_eq(Rn::T, Tair::T, Pa::T=atm, args...) where {T<:Real}
+  # T = eltype(Rn)
+  ϵ = 0.622 # ratio of molecular weight of water vapor to dry air
+  Cp = 4.2 * 0.242 / 1000 # MJ kg-1 K-1
+  
+  λ::T = cal_lambda(Tair) # MJ kg-1
+  Δ::T = cal_slope(Tair) # kPa degC-1
+  γ::T = Cp * Pa / (ϵ * λ) # kPa degC-1
+  Eeq::T = Δ / (Δ + γ) * Rn |> x -> W2mm(x; λ)
+  λ, Δ, γ, Eeq
+end
+
+# lambda: [MJ kg-1]
+W2mm(Ra; λ) = Ra * 86400 / 1e6 / λ
+
+function cal_lambda(Tair::T) where {T<:Real}
+  #  * u"MJ / kg"
+  # 2.501 - 0.00237 * Tair # bolton 1980
+  (2500.0 - Tair * 2.2) / 1000
 end
 
 cal_rho_a(Tair, Pa) = 3.486 * Pa / 1.01(Tair + 273.15) # kg/m3

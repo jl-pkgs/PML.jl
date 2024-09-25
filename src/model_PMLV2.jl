@@ -24,7 +24,7 @@
 3. Kong Dongdong, 2019, ISPRS
 """
 function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
-  Pa=atm, Ca=380.0, 
+  Pa=atm, Ca=380.0,
   Ω::T=T(1.0);
   # leaf::AbstractLeaf, 
   par::Param_PMLV2=Param_PMLV2(),
@@ -66,6 +66,7 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   r.ET_water = r.Eeq + Evp
 
   r.Es_eq = r.Eeq * Tou # Soil evaporation at equilibrium, mm d-1
+  # r.Es_eq = r.Eeq * exp(-0.9 * LAI) # Ka = 0.9, insensitive param
   r
   # GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, Eeq, ET_water, Ga, Gc_w
 end

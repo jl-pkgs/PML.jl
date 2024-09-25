@@ -4,7 +4,8 @@ function model_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
   par = Param_PMLV2(theta...)
 
   dobs = df[!, [:GPP_obs, :ET_obs]]
-  dsim = PMLV2_sites(df; par)
+  # dsim = PMLV2(df; par) # the exact MATLAB version
+  dsim = PMLV2_sites(df; par) 
 
   ## 8-day, yearly, yearly_anom
   info_GPP = GOF(dobs.GPP_obs, dsim.GPP)
@@ -14,9 +15,8 @@ function model_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
     indexes = [:KGE, :NSE, :R2, :RMSE, :bias, :bias_perc]
     info_GPP = info_GPP[indexes] |> round2
     info_ET = info_ET[indexes] |> round2
-
-    @show info_GPP
-    @show info_ET
+    # @show info_GPP
+    # @show info_ET
   end
 
   goal = (info_ET[of_gof] + info_GPP[of_gof]) / 2

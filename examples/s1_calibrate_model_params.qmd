@@ -3,12 +3,16 @@ include("data_PML_2019.jl")
 ```
 
 ```{julia}
-data.LAI .= data.LAI_sgfitw;
+# data.LAI .= data.LAI_sgfitw;
 # data.LAI .= data.LAI_raw
 # data.LAI .= data.LAI_whit
 # data = @rename(data, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
-r = calib_PMLV2(data; of_gof=:KGE, maxn=5000)
+# @time r = calib_PMLV2(data; of_gof=:KGE, maxn=5000)
+@time r = calib_PMLV2(data; of_gof=:NSE, maxn=10000)
 r.gof
+```
+
+```{julia}
 # out = fread("D:/GitHub/PML/PMLV2_Kong2019.m/OUTPUT/PMLv2_flux102_Cal_flux_v012.csv")
 # out = @rename(out, ET = ETsim, GPP = GPPsim, ET_obs = ETobs, GPP_obs = GPPobs)
 # model_gof(out)
@@ -16,13 +20,13 @@ r.gof
 
 # LAI_raw
     NSE       R2        KGE
-ET  0.659226  0.681471  0.823243
-GPP 0.724708  0.730096  0.796629
+ET  
+GPP 
 
 # LAI_sgfitw
     NSE       R2        KGE
-ET  0.659226  0.681471  0.823243
-GPP 0.724708  0.730096  0.796629
+ET  0.686842  0.698185  0.81079
+GPP 0.750509  0.755442  0.764359
 
 # LAI_whit
     NSE       R2        KGE

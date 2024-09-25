@@ -4,7 +4,7 @@ using Statistics
 round2(x::NamedTuple, digits=3; kw...) = map(val -> round(val; digits), x)
 
 
-function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=win_right) where {T<:Real}
+function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=0) where {T<:Real}
   n = length(y)
   z = zeros(Float64, n)
 
