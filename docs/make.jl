@@ -16,7 +16,7 @@ OUTPUT = joinpath(@__DIR__, "src/generated")
 
 preprocess(str) = replace(str, "x = 123" => "y = 321"; count=1)
 
-Literate.notebook(EXAMPLE, OUTPUT; preprocess)
+# Literate.notebook(EXAMPLE, OUTPUT; preprocess)
 Literate.markdown(EXAMPLE, OUTPUT; preprocess)
 # Literate.script(EXAMPLE, OUTPUT; preprocess)
 
@@ -72,7 +72,7 @@ makedocs(
     # "customprocessing.md",
     # "documenter.md",
     # "tips.md",
-    "generated/calib_IGBP.md",
+    "generated/CalibOneSite.md",
     # "changelog.md",
   ],
   warnonly=true,
