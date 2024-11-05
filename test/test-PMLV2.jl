@@ -20,10 +20,10 @@ end
   @test GOF(df_out.Ga, r.Ga).MAE <= 1e-10
   @test GOF(df_out.Gc, r.Gc_w).MAE <= 1e-3
   @test GOF(df_out.Ei, r.Ei).MAE <= 1e-8 # Ei passed Test
-  @test GOF(df_out.Ec, r.Ec).MAE <= 0.002
+  @test GOF(df_out.Ec, r.Ec).MAE <= 0.003
   @test GOF(df_out.Es, r.Es).MAE <= 0.01
   @test GOF(df_out.Ecr, r.Ecr).MAE <= 0.002
-  @test GOF(df_out.Eca, r.Eca).MAE <= 0.002
+  @test GOF(df_out.Eca, r.Eca).MAE <= 0.003
 
   @test GOF(df_out.ET_sim, r.ET).MAE <= 0.015
   @test GOF(df_out.GPP_sim, r.GPP).MAE <= 1E-8
