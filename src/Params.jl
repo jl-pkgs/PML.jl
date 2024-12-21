@@ -14,10 +14,10 @@ $(TYPEDFIELDS)
 """
 @bounds @with_kw mutable struct Param_PMLV2{FT<:AbstractFloat} <: AbstractETParam{FT}
   "initial slope of the light response curve to assimilation rate, (i.e., quantum efficiency; `μmol CO2 [μmol PAR]⁻¹`)`"
-  Alpha ::FT = 0.06  | (0.01, 0.10)
+  α::FT = 0.06  | (0.01, 0.10)
 
   "initial slope of the CO2 response curve to assimilation rate, (i.e., carboxylation efficiency; `μmol m⁻² s⁻¹ [μmol m⁻² s⁻¹]⁻¹`)"
-  Thelta::FT = 0.04  | (0.01, 0.07)
+  η::FT = 0.04  | (0.01, 0.07)
 
   "stomatal conductance coefficient" # 气孔导度斜率参数
   g1     ::FT = 10.00 | (2.00, 100.00)

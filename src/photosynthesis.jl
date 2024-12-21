@@ -8,19 +8,18 @@
 """
 function photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T,
   Pa=atm, Ca=380.0; par::Param_PMLV2) where {T<:Real}
-
-  kQ = par.kQ # light extinction coefficient
+  (; kQ, Am_25, α, η, D0, g1) = par
 
   PAR = 0.45 * Rs # W m-2, taken as 0.45 time of solar radiation
   PAR_mol = PAR * 4.57 # 1 W m-2 = 4.57 umol m-2 s-1
 
-  Vm = par.Am_25 * T_adjust_Vm25(Tavg) # * data$dhour_norm^2 
+  Vm = Am_25 * T_adjust_Vm25(Tavg) # * data$dhour_norm^2 
   Am = Vm # 认为最大光合速率 = 最大羧化能力
 
-  P1 = Am * par.Alpha * par.Thelta * PAR_mol
-  P2 = Am * par.Alpha * PAR_mol
-  P3 = Am * par.Thelta * Ca
-  P4 = par.Alpha * par.Thelta * PAR_mol * Ca
+  P1 = Am * α * η * PAR_mol
+  P2 = Am * α * PAR_mol
+  P3 = Am * η * Ca
+  P4 = α * η * PAR_mol * Ca
 
   ## canopy conductance in (mol m-2 s-1)
   Ags = Ca * P1 / (P2 * kQ + P4 * kQ) * (
@@ -30,8 +29,8 @@ function photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T,
 
   GPP = Ag * 86400 / 10^6 * 12 # [umol m-2 s-1] to [g C m-2 d-1]
 
-  f_VPD_gc = 1.0 / (1.0 + VPD / par.D0) # Leuning f_vpd
-  Gc = par.g1 * Ag / Ca * f_VPD_gc # canopy conductance for carbon
+  f_VPD_gc = 1.0 / (1.0 + VPD / D0) # Leuning f_vpd
+  Gc = g1 * Ag / Ca * f_VPD_gc # canopy conductance for carbon
 
   ## Convert from mol m-2 s-1 to m s-1
   Gc = Gc * 1e-2 / (0.446 * (273 / (273 + Tavg)) * (Pa / 101.3)) # Gc = Gc * mol2m(Tavg, Pa)
