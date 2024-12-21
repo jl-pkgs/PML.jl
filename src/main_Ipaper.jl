@@ -61,3 +61,5 @@ end
 # export struct2vec, struct2tuple
 export round2;
 export movmean2, nanmean2, getDataType, replace_miss
+
+weighted_mean(x::AbstractVector, w::AbstractVector) = sum(x .* w) / sum(w)

@@ -15,11 +15,9 @@ function model_goal(df, theta; IGBPcode=nothing, of_gof=:NSE, verbose=false)
     indexes = [:KGE, :NSE, :R2, :RMSE, :bias, :bias_perc]
     info_GPP = info_GPP[indexes] |> round2
     info_ET = info_ET[indexes] |> round2
-    # @show info_GPP
-    # @show info_ET
   end
-
-  goal = (info_ET[of_gof] + info_GPP[of_gof]) / 2
+  gof = [info_ET[of_gof], info_GPP[of_gof]]
+  goal = weighted_mean(gof, [1, 0.5])
   goal
 end
 

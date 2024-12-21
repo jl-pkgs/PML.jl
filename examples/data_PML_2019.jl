@@ -2,19 +2,6 @@ using Ipaper, HydroTools, PML
 using DataFrames, RTableTools
 using Test, BenchmarkTools
 
-function replace_miss!(df::AbstractDataFrame)
-  # colnames = names(df)
-  # num_cols = [name for name in colnames if getDataType(df[!, name]) <: Number]
-  for col in names(df)
-    x = df[!, col]
-    type = getDataType(x)
-    if type <: AbstractFloat
-      df[!, col] = drop_missing(x)
-    end
-  end
-  df
-end
-
 small = false
 if small
   f = "D:/GitHub/PML/PMLV2_Kong2019.m/data/INPUT_dt_v2019.csv"

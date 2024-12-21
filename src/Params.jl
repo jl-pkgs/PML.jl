@@ -19,8 +19,8 @@ $(TYPEDFIELDS)
   "initial slope of the CO2 response curve to assimilation rate, (i.e., carboxylation efficiency; `μmol m⁻² s⁻¹ [μmol m⁻² s⁻¹]⁻¹`)"
   Thelta::FT = 0.04  | (0.01, 0.07)
 
-  "stomatal conductance coefficient"
-  m     ::FT = 10.00 | (2.00, 100.00)
+  "stomatal conductance coefficient" # 气孔导度斜率参数
+  g1     ::FT = 10.00 | (2.00, 100.00)
 
   "carbon saturated rate of photosynthesis at 25 °C, `μmol m⁻² s⁻¹`"
   Am_25 ::FT = 50.00 | (5.00, 120.00)

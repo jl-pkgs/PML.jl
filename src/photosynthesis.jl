@@ -31,7 +31,7 @@ function photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T,
   GPP = Ag * 86400 / 10^6 * 12 # [umol m-2 s-1] to [g C m-2 d-1]
 
   f_VPD_gc = 1.0 / (1.0 + VPD / par.D0) # Leuning f_vpd
-  Gc = par.m * Ag / Ca * f_VPD_gc # canopy conductance for carbon
+  Gc = par.g1 * Ag / Ca * f_VPD_gc # canopy conductance for carbon
 
   ## Convert from mol m-2 s-1 to m s-1
   Gc = Gc * 1e-2 / (0.446 * (273 / (273 + Tavg)) * (Pa / 101.3)) # Gc = Gc * mol2m(Tavg, Pa)
