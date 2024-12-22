@@ -3,15 +3,21 @@ module PML
 export PMLV2, PMLV2_sites, 
   photosynthesis, cal_Ei_Dijk2021, 
   T_adjust_Vm25, f_VPD_Zhang2019
-export DataFrame, GOF
+
 export file_FLUXNET_CRO, file_FLUXNET_CRO_USTwt
+export DataFrame, GOF
+export fread, fwrite, melt_list
+
 
 using Parameters
 using FieldMetadata
 using DataFrames
 using Statistics
-import HydroTools: cal_Uz, Cp, atm, GOF, sceua
+using RTableTools
 using DocStringExtensions
+
+import HydroTools: cal_Uz, Cp, atm, GOF, sceua
+import Ipaper: par_map
 
 ## global data
 dir_proj = "$(@__DIR__)/.."
@@ -21,17 +27,15 @@ file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
 
 include("main_Ipaper.jl")
 include("Params.jl")
-include("Optim/ModelCalib.jl")
+include("ModelCalib.jl")
 include("ET_helper.jl")
+include("water_constrain.jl")
+include("photosynthesis.jl")
 # include("PET_equilibrium.jl")
 # include("Ei_EvapIntercepted.jl")
 # include("Ec_CanopyTrans.jl")
 # include("Es_EvapSoil.jl")
-include("water_constrain.jl")
-include("photosynthesis.jl")
 # include("model_PMLV2.jl")
-
-
 
 """
     PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model

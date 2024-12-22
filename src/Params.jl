@@ -58,26 +58,30 @@ function Base.collect(par::AbstractETParam)
   [getfield(par, f) for f in fieldnames(typeof(par))]
 end
 
-function get_bounds(par::AbstractETParam, parNames::Vector{Symbol}=ParNames)
+function get_bounds(parNames::Vector{Symbol}=ParNames)
   inds = match2(parNames, ParNames).I_y # 选择的参数
-  bs = bounds(par)[inds]
-  x0 = vcat([getfield(par, f) for f in parNames]...)
+  bs = bounds(Param_PMLV2)[inds]
   lower = vcat(map(x -> x[1], bs)...)
   upper = vcat(map(x -> x[2], bs)...)
-  x0, lower, upper
+  lower, upper
 end
 
 
 # theta2par(theta) = Param_PMLV2(theta...)
-function theta2par(theta::Vector, par::AbstractETParam, parNames::Vector{Symbol})
+function theta2par!(theta::Vector, par::AbstractETParam, parNames::Vector{Symbol})
   k = 0
   for key in parNames
     x = getfield(par, key)
     n = length(x)
-    inds = k+1:k+n
+    inds = n == 1 ? k+1 : k+1:k+n
     k += n
     setfield!(par, key, theta[inds])
   end
+  return par
+end
+
+function theta2par(theta::Vector, parNames::Vector{Symbol})
+  theta2par!(theta, deepcopy(par0), parNames)
 end
 
 function select_param(par::AbstractETParam, parNames)
@@ -88,11 +92,8 @@ end
 hc_raw = [10, 10, 10, 10, 10, 1, 1, 5, 5, 0.2, 1, 0.5, 10, 1, 0.01, 0.05, 0.01]
 
 FT = Float64
-
 par0 = Param_PMLV2()
 theta0 = collect(par0)
-# parNames = fieldnames(Param_PMLV2)
-# parRanges = get_bounds(par0)
 
 function theta2param(params::Vector{Vector{T}}, IGBPs) where {T<:Real}
   parNames = fieldnames(Param_PMLV2) |> collect
@@ -103,7 +104,7 @@ function theta2param(params::Vector{Vector{T}}, IGBPs) where {T<:Real}
 end
 
 
-export bounds, Param_PMLV2
-export parRanges, parNames, theta0, par0, hc_raw
-export get_bounds, select_param
+export bounds, get_bounds, select_param
+export Param_PMLV2, ParNames
+export theta0, par0, hc_raw
 export param_PML, theta2par, theta2param

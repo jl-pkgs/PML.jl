@@ -1,8 +1,9 @@
 using PML, Test, Ipaper, DataFrames
 
 df_out, df, _par = deserialize(file_FLUXNET_CRO_USTwt)
-par = Param_PMLV2(;_par..., hc=0.5)
-
+df.GPP_obs = df.GPPobs
+df.ET_obs = df.ETobs
+par = Param_PMLV2(; _par..., hc=0.5)
 r = PMLV2_sites(df; par)
 
 @testset "PMLV2 scalar" begin
@@ -32,18 +33,21 @@ end
 end
 
 
-# @testset "ModelCalib" begin
-#   df.GPP_obs = df.GPPobs
-#   df.ET_obs = df.ETobs
-#   @time _theta, goal, flag = ModelCalib(df, par0; IGBPcode=df.IGBPcode[1], maxn=2500)
-#   goal = model_goal(df, _theta; verbose=true)
-#   @test goal > 0.55 # mean(KGE_GPP, KGE_ET)
-# end
+@testset "model_gof" begin
+  d = DataFrame(; IGBP=["CRO", "CRO", "CRO"],
+    ET_obs=[1.0, 2, 3], ET=[0.5, 0.6, 0.7],
+    GPP_obs=[1.0, 2, 3], GPP=[1, 1.5, 2.0])
+  @test size(model_gof(d).ET, 1) == 2
+  @test size(model_gof(d; all=false).ET, 1) == 1
+end
 
-# @testset "model_gof" begin
-#   d = DataFrame(; IGBP=["CRO", "CRO", "CRO"],
-#     ET_obs=[1.0, 2, 3], ET=[0.5, 0.6, 0.7],
-#     GPP_obs=[1.0, 2, 3], GPP=[1, 1.5, 2.0])
-#   @test size(model_gof(d).ET, 1) == 2
-#   @test size(model_gof(d; all=false).ET, 1) == 1
-# end
+
+@testset "ModelCalib" begin
+  parNames = [
+    :α, :η, :g1, :Am_25, :VPDmin, :VPDmax, :D0, :kQ, :kA, :S_sls, :fER0 # :hc
+  ]
+
+  @time _theta, goal, flag = ModelCalib(df, par0, parNames; IGBPcode=df.IGBPcode[1], maxn=2500)
+  goal = model_goal(df, _theta, parNames; verbose=true)
+  @test goal > 0.55 # mean(KGE_GPP, KGE_ET)
+end
