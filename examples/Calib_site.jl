@@ -4,15 +4,19 @@
 using PML, Ipaper
 
 #nb # %% A slide [markdown] {"slideshow": {"slide_type": "slide"}}
-df_out, df, par = deserialize(file_FLUXNET_CRO_USTwt)
+df_out, df, _par = deserialize(file_FLUXNET_CRO_USTwt)
+par = Param_PMLV2(; _par..., hc=0.5)
 df.GPP_obs = df.GPPobs
 df.ET_obs = df.ETobs
 
 # ## 模型参数率定
+parNames = [
+  :α, :η, :g1, :Am_25, :VPDmin, :VPDmax, :D0, :kQ, :kA, :S_sls, :fER0 # :hc
+]
 
 #nb # %% A slide [markdown] {"slideshow": {"slide_type": "fragment"}}
-theta, goal, flag = ModelCalib(df, par0)
-df_out = PMLV2_sites(df; par=theta2par(theta))
+theta, goal, flag = ModelCalib(df, par0, parNames)
+df_out = PMLV2_sites(df; par=theta2par(theta, parNames))
 df_out[1:10, :]
 
 # ## 拟合优度

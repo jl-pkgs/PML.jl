@@ -11,7 +11,7 @@ using Literate
 using Plots # to not capture precompilation output
 
 # generate examples
-EXAMPLE = joinpath(@__DIR__, "..", "examples", "CalibOneSite.jl")
+EXAMPLE = joinpath(@__DIR__, "..", "examples", "Calib_site.jl")
 OUTPUT = joinpath(@__DIR__, "src/generated")
 
 preprocess(str) = replace(str, "x = 123" => "y = 321"; count=1)
@@ -72,7 +72,7 @@ makedocs(
     # "customprocessing.md",
     # "documenter.md",
     # "tips.md",
-    "generated/CalibOneSite.md",
+    "generated/Calib_site.md",
     # "changelog.md",
   ],
   warnonly=true,

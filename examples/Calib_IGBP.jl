@@ -1,5 +1,7 @@
 using PML, Ipaper, Test, RTableTools
-df_out, df, par = deserialize(file_FLUXNET_CRO)
+
+df_out, df, _par = deserialize(file_FLUXNET_CRO)
+par = Param_PMLV2(; _par..., hc=0.5)
 df.GPP_obs = df.GPPobs
 df.ET_obs = df.ETobs
 r = PMLV2(df; par)

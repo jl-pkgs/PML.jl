@@ -3,11 +3,9 @@ export model_goal
 export model_gof
 
 include("DataType.jl")
-# include("model_gof.jl")
 
 function ModelCalib_IGBPs(data::AbstractDataFrame;
-  parNames=ParNames,
-  of_gof=:KGE, maxn=2500)
+  parNames=ParNames, of_gof=:KGE, maxn=2500)
 
   vars = ["IGBPname", "IGBPcode", "site", "date", "GPP_obs", "ET_obs",
     "Prcp", "Tavg", "U2", "Rn", "Rs", "VPD", "LAI", "Pa", "Ca"]
@@ -16,8 +14,7 @@ function ModelCalib_IGBPs(data::AbstractDataFrame;
   @time params = par_map(IGBP -> begin
       df = data[data.IGBP.==IGBP, vars]
       IGBPcode = df.IGBPcode[1]
-      theta, _, _ = ModelCalib(df, par0, parNames; IGBPcode, of_gof, maxn, verbose=false)
-      theta
+      ModelCalib(df, par0, parNames; IGBPcode, of_gof, maxn, verbose=false)[1]
     end, IGBPs; progress=false)
 
   # printstyled("[i=$i, IGBP = $IGBP] \n", bold=true, color=:green, underline=false)
@@ -79,17 +76,15 @@ end
 
 ## gof of ET and GPP for ALL IGBP
 function model_gof(df_out::DataFrame; all=true)
-  fun_et(d) = GOF(d.ET_obs, d.ET)
-  fun_gpp(d) = GOF(d.GPP_obs, d.GPP)
-
   lst = groupby(df_out, :IGBP)
 
-  res = map_df_tuple(fun_et, lst)
-  all && push!(res, (; IGBP="ALL", fun_et(df_out)...))
-  gof_et = DataFrame(res)
+  fun_et(d) = GOF(d.ET_obs, d.ET)
+  fun_gpp(d) = GOF(d.GPP_obs, d.GPP)
+  func = (; ET=fun_et, GPP=fun_gpp)
 
-  res = map_df_tuple(fun_gpp, lst)
-  all && push!(res, (; IGBP="ALL", fun_gpp(df_out)...))
-  gof_gpp = DataFrame(res)
-  (; ET=gof_et, GPP=gof_gpp)
+  map(f -> begin
+      res = map_df_tuple(fun_et, lst)
+      all && push!(res, (; IGBP="ALL", fun_et(df_out)...))
+      DataFrame(res)
+    end, func)
 end

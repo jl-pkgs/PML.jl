@@ -1,3 +1,7 @@
+export interm_PML, output_PML
+export to_mat;
+
+
 @with_kw mutable struct interm_PML{T}
   ET::T = 0.0
   GPP::T = 0.0
@@ -74,19 +78,3 @@ function to_df(res::output_PML{T}) where {T<:Real}
   data, names = to_mat(res)
   DataFrame(data, names)
 end
-
-function map_df_tuple(fun::Function, lst::GroupedDataFrame{DataFrame}, args...; kw...)
-  n = length(lst)
-  _keys = keys(lst)
-  map(i -> begin
-      d = lst[i]
-      key = NamedTuple(_keys[i])
-      r = fun(d, args...; kw...)
-      (; key..., r...)
-    end, 1:n)
-end
-
-
-export interm_PML, output_PML
-export to_mat;
-export map_df_tuple

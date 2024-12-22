@@ -25,8 +25,8 @@ file_FLUXNET_CRO = "$dir_proj/data/CRO/FLUXNET_CRO" |> abspath
 file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
 
 
-include("main_Ipaper.jl")
-include("Params.jl")
+include("utilize.jl")
+include("Parameter.jl")
 include("ModelCalib.jl")
 include("ET_helper.jl")
 include("water_constrain.jl")
