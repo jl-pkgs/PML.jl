@@ -1,4 +1,6 @@
-using Statistics
+# export struct2vec, struct2tuple
+export round2;
+export movmean2, nanmean2, getDataType, replace_miss
 
 # rounded_data = NamedTuple((field => round(value) for (field, value) in data))
 round2(x::NamedTuple, digits=3; kw...) = map(val -> round(val; digits), x)
@@ -57,9 +59,4 @@ end
 #   vals = [getfield(x, key) for key in keys]
 #   (; zip(keys, vals)...)
 # end
-
-# export struct2vec, struct2tuple
-export round2;
-export movmean2, nanmean2, getDataType, replace_miss
-
 weighted_mean(x::AbstractVector, w::AbstractVector) = sum(x .* w) / sum(w)
