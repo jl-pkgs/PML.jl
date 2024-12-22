@@ -7,8 +7,8 @@ include("data_PML_2019.jl")
 # data.LAI .= data.LAI_raw
 # data.LAI .= data.LAI_whit
 # data = @rename(data, LAI = LAI_whit) # LAI_raw, LAI_whit, LAI_sgfitw
-# @time r = calib_PMLV2(data; of_gof=:KGE, maxn=5000)
-@time r = calib_PMLV2(data; of_gof=:NSE, maxn=10000)
+# @time r = ModelCalib_IGBPs(data; of_gof=:KGE, maxn=5000)
+@time r = ModelCalib_IGBPs(data; of_gof=:NSE, maxn=10000)
 r.gof
 ```
 

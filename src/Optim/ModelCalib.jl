@@ -1,7 +1,14 @@
-import Ipaper: par_map
+export ModelCalib, ModelCalib_IGBPs
+export fread, fwrite, melt_list
 
-# all sites
-function calib_PMLV2(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
+using RTableTools
+import Ipaper: par_map
+include("DataType.jl")
+include("model_gof.jl")
+# include("PMLV2_sites.jl")
+
+
+function ModelCalib_IGBPs(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
   vars = ["IGBPname", "IGBPcode", "site", "date", "GPP_obs", "ET_obs",
     "Prcp", "Tavg", "U2", "Rn", "Rs", "VPD", "LAI", "Pa", "Ca"]
   IGBPs = unique(data.IGBPname) |> sort
@@ -9,7 +16,7 @@ function calib_PMLV2(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
   @time params = par_map(IGBP -> begin
       df = data[data.IGBP.==IGBP, vars]
       IGBPcode = df.IGBPcode[1]
-      theta, _, _ = model_calib(df, par0; IGBPcode, of_gof, maxn, verbose=false)
+      theta, _, _ = ModelCalib(df, par0; IGBPcode, of_gof, maxn, verbose=false)
       theta
     end, IGBPs; progress=false)
 
@@ -30,4 +37,18 @@ function calib_PMLV2(data::AbstractDataFrame; of_gof=:KGE, maxn=2500)
   (; param=theta2param(params, IGBPs), gof, output=df_out)
 end
 
-export calib_PMLV2
+
+## 一个站点的率定
+"""
+    ModelCalib(df::AbstractDataFrame, par0::AbstractETParam; 
+        IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
+"""
+function ModelCalib(df::AbstractDataFrame, par0::AbstractETParam; IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
+  parRanges = get_bounds(par0)
+  lower = parRanges[:, 1]
+  upper = parRanges[:, 2]
+  theta0 = collect(par0) # must be vector
+
+  sceua(theta -> -model_goal(df, theta; IGBPcode, of_gof, kw...),
+    theta0, lower, upper; maxn, kw...) # theta, goal, flag
+end

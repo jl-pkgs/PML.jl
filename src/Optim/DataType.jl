@@ -1,24 +1,23 @@
-using Parameters
-
 @with_kw mutable struct interm_PML{T}
-  ET::T = T(0)
-  GPP::T = T(0)
-  Ec::T = T(0)
-  Ecr::T = T(0)
-  Eca::T = T(0)
+  ET::T = 0.0
+  GPP::T = 0.0
+  Ec::T = 0.0
+  Ecr::T = 0.0
+  Eca::T = 0.0
 
-  Ei::T = T(0)
-  Pi::T = T(0)
-  Es_eq::T = T(0)
-  Eeq::T = T(0)
-  ET_water::T = T(0)
+  Ei::T = 0.0
+  Pi::T = 0.0
+  Es_eq::T = 0.0
+  Eeq::T = 0.0
+  ET_water::T = 0.0
 
-  Ga::T = T(0)
-  Gc_w::T = T(0)
+  Ga::T = 0.0
+  Gc_w::T = 0.0
 
-  fval_soil::T = T(0)
-  Es::T = T(0)
+  fval_soil::T = 0.0
+  Es::T = 0.0
 end
+
 
 @with_kw mutable struct output_PML{T}
   n::Integer
@@ -79,4 +78,3 @@ end
 
 export interm_PML, output_PML
 export to_mat;
-

@@ -11,7 +11,7 @@ df.ET_obs = df.ETobs
 # ## 模型参数率定
 
 #nb # %% A slide [markdown] {"slideshow": {"slide_type": "fragment"}}
-theta, goal, flag = model_calib(df, par0)
+theta, goal, flag = ModelCalib(df, par0)
 df_out = PMLV2_sites(df; par=theta2par(theta))
 df_out[1:10, :]
 

@@ -11,7 +11,7 @@ df = data[data.site.=="固城", :]
 par = par0
 r = PMLV2(df; par)
 
-theta, goal, flag = model_calib(df, par0)
+theta, goal, flag = ModelCalib(df, par0)
 df_out = PMLV2_sites(df; par=theta2par(theta))
 # df_out[1:10, :]
 sites = unique(df.site)
