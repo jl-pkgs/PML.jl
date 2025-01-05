@@ -1,7 +1,7 @@
 module PML
 
-export PMLV2, PMLV2_sites, 
-  photosynthesis, cal_Ei_Dijk2021, 
+export PMLV2, PMLV2_sites,
+  photosynthesis, cal_Ei_Dijk2021,
   T_adjust_Vm25, f_VPD_Zhang2019
 
 export file_FLUXNET_CRO, file_FLUXNET_CRO_USTwt
@@ -63,7 +63,9 @@ include("photosynthesis.jl")
 3. Kong Dongdong, 2019, ISPRS
 """
 function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
-  Pa=atm, Ca=380.0,
+  Pa=atm,
+  Ca=380.0,
+  PC=1.0,
   Ω::T=T(1.0);
   # leaf::AbstractLeaf, 
   par::Param_PMLV2=Param_PMLV2(),
@@ -77,7 +79,7 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   ϵ = Δ / γ
 
   ### CARBON MODULE: PHOTOSYNTHESIS --------------------------------------------
-  r.GPP, r.Gc_w = photosynthesis(Tavg, Rs, VPD, LAI, Pa, Ca; par)
+  r.GPP, r.Gc_w = photosynthesis(Tavg, Rs, VPD, LAI, Pa, Ca, PC; par)
 
   ### WATER MODULE: ------------------------------------------------------------
   ## Intercepted Evaporation (Ei)
@@ -111,6 +113,7 @@ function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
 end
 
 
+
 """
     PMLV2(Prcp, Tavg, Rs, Rn, VPD, U2, LAI, Pa, Ca; par=param0, frame=3)
 
@@ -123,7 +126,8 @@ end
 function PMLV2(Prcp::V, Tavg::V, Rs::V, Rn::V,
   VPD::V, U2::V, LAI::V,
   Pa::V,
-  Ca::Union{T,V}=T(380.0);
+  Ca::V,
+  PC::Union{T,V} = T(1.0);
   par::Param_PMLV2=Param_PMLV2(), frame=3,
   res::Union{Nothing,output_PML}=nothing) where {T<:Real,V<:AbstractVector{T}}
 
@@ -132,12 +136,14 @@ function PMLV2(Prcp::V, Tavg::V, Rs::V, Rn::V,
   r = interm_PML{T}()
   res === nothing && (res = output_PML{T}(; n))
 
-  isvec_Ca = isa(Ca, AbstractVector)
+  # isvec_Ca = isa(Ca, AbstractVector)
+  isvec_PC = isa(PC, AbstractVector)
   @inbounds for t = 1:n
-    _Ca = isvec_Ca ? Ca[t] : Ca
+    # _Ca = isvec_Ca ? Ca[t] : Ca
+    _PC = isvec_PC ? PC[t] : PC
 
     PMLV2(Prcp[t], Tavg[t], Rs[t], Rn[t], VPD[t], U2[t], LAI[t], Pa[t],
-      _Ca; par, r)
+      Ca[t], _PC[t]; par, r)
     res[t, fields] = r
   end
 
@@ -156,13 +162,18 @@ end
   + `r`: `interm_PML`
 """
 function PMLV2(d::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw...)
-  PMLV2(d.Prcp, d.Tavg, d.Rs, d.Rn,
-    d.VPD, d.U2, d.LAI,
-    d.Pa, d.Ca; par, kw...) |> to_df
+  (; Prcp, Tavg, Rs, Rn, VPD, U2, LAI, Pa, Ca) = d
+  PC = "PC" ∈ names(d) ? d.PC : 1.0
+  
+  PMLV2(Prcp, Tavg, Rs, Rn,
+    VPD, U2, LAI,
+    Pa, Ca, PC; par, kw...) |> to_df
 end
 
 # 相同植被类型多个站点一起的计算
 function PMLV2_sites(df::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw...)
+  "site" ∉ names(df) && return PMLV2(df; par, kw...)
+
   sites = df.site
   grps = unique(sites)
 

@@ -2,3 +2,4 @@ Manifest.toml
 *.csv
 *temp*
 build
+*.pdf

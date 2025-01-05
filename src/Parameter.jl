@@ -41,6 +41,10 @@ $(TYPEDFIELDS)
 
   "canopy height, `[m]`"
   hc::FT = 1.0 | (0.01, 20.0)
+
+  "photoperiod constraint"
+  d_pc::FT = 2.0 | (0.1, 5.0)
+
   ## 做出三套参数
   # LAIref::FT = 4.0   | (1.0, 6.0)      # 
   # frame::Integer = 10.0  | (6.0, 14.0) # 8-day moving window

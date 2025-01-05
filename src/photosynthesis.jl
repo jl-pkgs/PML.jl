@@ -7,13 +7,13 @@
 ```
 """
 function photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T,
-  Pa=atm, Ca=380.0; par::Param_PMLV2) where {T<:Real}
-  (; kQ, Am_25, α, η, D0, g1) = par
+  Pa=atm, Ca=380.0, PC=1.0; par::Param_PMLV2) where {T<:Real}
+  (; kQ, Am_25, α, η, D0, g1, d_pc) = par
 
   PAR = 0.45 * Rs # W m-2, taken as 0.45 time of solar radiation
   PAR_mol = PAR * 4.57 # 1 W m-2 = 4.57 umol m-2 s-1
 
-  Vm = Am_25 * T_adjust_Vm25(Tavg) # * data$dhour_norm^2 
+  Vm = Am_25 * T_adjust_Vm25(Tavg) * PC^d_pc # * data$dhour_norm^2 
   Am = Vm # 认为最大光合速率 = 最大羧化能力
 
   P1 = Am * α * η * PAR_mol

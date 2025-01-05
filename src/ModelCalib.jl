@@ -69,7 +69,10 @@ function model_goal(df, theta, parNames; IGBPcode=nothing, of_gof=:NSE, verbose=
     info_GPP = info_GPP[indexes] |> round2
     info_ET = info_ET[indexes] |> round2
   end
-  gof = [info_ET[of_gof], info_GPP[of_gof]]
+  # _gpp = info_GPP[of_gof]
+  _gpp = all(isnan.(dobs.GPP_obs)) ? 0.6 : info_GPP[of_gof]
+
+  gof = [info_ET[of_gof], _gpp]
   weighted_mean(gof, [1.0, 1.0]) # goal
 end
 
