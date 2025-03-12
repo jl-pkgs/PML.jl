@@ -43,7 +43,7 @@ $(TYPEDFIELDS)
   hc::FT = 1.0 | (0.01, 20.0)
 
   "photoperiod constraint"
-  d_pc::FT = 2.0 | (0.1, 5.0)
+  d_pc::FT = 2.0 | (0.0, 5.0)
 
   ## 做出三套参数
   # LAIref::FT = 4.0   | (1.0, 6.0)      # 

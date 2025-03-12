@@ -31,7 +31,7 @@ plot_Figure1 <- function(VAR="GPP", type_lai = "whit",
     # geom_text_repel(data = pdat[abs(NonPC - WithPC) >= 0.02,],
     #   aes(label = site), hjust = 0, vjust = 0, color = "blue") +
     geom_text_repel(
-      data = pdat[abs(diff) >= thr], aes(color = diff_lev, label = site),
+      data = pdat[abs(diff) >= thr], aes(color = diff_lev, label = site), min.segment.length = 0.2, 
       hjust = 0, vjust = 0, alpha = 0.8) +
     # geom_text_repel(data = pdat[(WithPC - NonPC) <= -0.02,],
     #   aes(label = site), hjust = 0, vjust = 0, color = "red", alpha = 0.8) +
@@ -47,9 +47,11 @@ plot_Figure1 <- function(VAR="GPP", type_lai = "whit",
 }
 
 ## LAI
-type_lai = "glass"
-x = "ConstPC"
+type_lai = "whit"
+# type_lai = "glass"
+# x = "ConstPC"
 x = "NonPC"
 y = "ConstPC"
+# y = "WithPC"
 plot_Figure1("GPP", type_lai, thr = 0.02, x = x, y = y)
-plot_Figure1("ET", type_lai, lims = c(0.2, 0.85), thr = 0.02, x = x, y = y)
+plot_Figure1("ET", type_lai, lims = c(0.2, 0.9), thr = 0.02, x = x, y = y)

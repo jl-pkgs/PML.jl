@@ -4,6 +4,8 @@ pacman::p_load(
 )
 
 d = fread("./OUTPUT/PMLV2China_flux37_LAI_glass,WithPC_par.csv")
+d = fread("./OUTPUT/PMLV2China_flux37_LAI_whit,WithPC_par.csv")
+
 hist(d$d_pc) # 他应该是一个不敏感性参数，大胆设置为2
 
 # NonPC = fread("./OUTPUT/PMLV2China_flux37_LAI_glass,NonPC_gof.csv")
