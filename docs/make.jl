@@ -1,5 +1,5 @@
 using Documenter
-using PML
+using PenmanMonteithLeuning
 
 if haskey(ENV, "GITHUB_ACTIONS")
   ENV["JULIA_DEBUG"] = "Documenter"

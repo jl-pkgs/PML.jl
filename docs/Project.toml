@@ -2,5 +2,5 @@
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Ipaper = "e58298cb-69f7-4186-aecd-5834b6793426"
 Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
-PML = "6d0293b8-e749-48b5-896f-0ef93cd51027"
+PenmanMonteithLeuning = "6d0293b8-e749-48b5-896f-0ef93cd51027"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"

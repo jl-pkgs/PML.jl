@@ -760,7 +760,7 @@ deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
 version = "10.42.0+1"
 
-[[deps.PML]]
+[[deps.PenmanMonteithLeuning]]
 deps = ["DataFrames", "DocStringExtensions", "FieldMetadata", "HydroTools", "Ipaper", "Parameters", "RTableTools", "Statistics", "Test"]
 git-tree-sha1 = "dd8fac53205606f288f528d6d0471243f44f3310"
 repo-rev = "master"

@@ -1,7 +1,7 @@
-name = "PML"
+name = "PenmanMonteithLeuning"
 uuid = "6d0293b8-e749-48b5-896f-0ef93cd51027"
 authors = ["Dongdong Kong <kongdd@users.noreply.github.com>"]
-version = "0.1.0"
+version = "0.1.2"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

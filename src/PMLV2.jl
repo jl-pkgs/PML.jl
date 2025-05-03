@@ -1,42 +1,3 @@
-module PML
-
-export PMLV2, PMLV2_sites,
-  photosynthesis, cal_Ei_Dijk2021,
-  T_adjust_Vm25, f_VPD_Zhang2019
-
-export file_FLUXNET_CRO, file_FLUXNET_CRO_USTwt
-export DataFrame, GOF
-export fread, fwrite, melt_list
-
-
-using Parameters
-using FieldMetadata
-using DataFrames
-using Statistics
-using RTableTools
-using DocStringExtensions
-
-import HydroTools: cal_Uz, Cp, atm, GOF, sceua
-import Ipaper: par_map
-
-## global data
-dir_proj = "$(@__DIR__)/.."
-file_FLUXNET_CRO = "$dir_proj/data/CRO/FLUXNET_CRO" |> abspath
-file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
-
-
-include("utilize.jl")
-include("Parameter.jl")
-include("ModelCalib.jl")
-include("ET_helper.jl")
-include("water_constrain.jl")
-include("photosynthesis.jl")
-# include("PET_equilibrium.jl")
-# include("Ei_EvapIntercepted.jl")
-# include("Ec_CanopyTrans.jl")
-# include("Es_EvapSoil.jl")
-# include("model_PMLV2.jl")
-
 """
     PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model
 
@@ -63,9 +24,8 @@ include("photosynthesis.jl")
 3. Kong Dongdong, 2019, ISPRS
 """
 function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
-  Pa=atm,
-  Ca=380.0,
-  PC=1.0,
+  Pa=atm, 
+  Ca=380.0, PC=1.0,
   Ω::T=T(1.0);
   # leaf::AbstractLeaf, 
   par::Param_PMLV2=Param_PMLV2(),
@@ -187,6 +147,3 @@ function PMLV2_sites(df::AbstractDataFrame; par::Param_PMLV2=Param_PMLV2(), kw..
   end
   vcat(res...)
 end
-
-
-end # module PML
