@@ -16,11 +16,11 @@ $(TYPEDFIELDS)
   "initial slope of the CO2 response curve to assimilation rate, (i.e., carboxylation efficiency; `μmol m⁻² s⁻¹ [μmol m⁻² s⁻¹]⁻¹`)"
   η::FT = 0.04 | (0.01, 0.07)
 
-  "stomatal conductance coefficient" # 气孔导度斜率参数
+  "stomatal conductance coefficient, `μmol m⁻² s⁻¹`" # 气孔导度斜率参数
   g1::FT = 10.00 | (2.00, 100.00)
 
   "carbon saturated rate of photosynthesis at 25 °C, `μmol m⁻² s⁻¹`"
-  Am_25::FT = 50.00 | (5.00, 120.00)
+  VCmax25::FT = 50.00 | (5.00, 120.00)
 
   "parameter to constrain `gc`, kPa"
   VPDmin::FT = 0.9 | (0.65, 1.5)
@@ -52,7 +52,7 @@ $(TYPEDFIELDS)
   _η::Vector{FT} = [0.04, 0.04, 0.04] | ([0.01, 0.01, 0.01], [0.07, 0.07, 0.07])
   _α::Vector{FT} = [0.06, 0.06, 0.06] | ([0.01, 0.01, 0.01], [0.10, 0.10])
   _g1::Vector{FT} = [10.0, 10.0, 10.0] | ([2.0, 2.0, 2.0], [100.0, 100.0, 100.0])
-  _Am_25::Vector{FT} = [50.0, 50.0, 50.0] | ([5.0, 5.0, 5.0], [120.0, 120.0, 120.0])
+  _VCmax25::Vector{FT} = [50.0, 50.0, 50.0] | ([5.0, 5.0, 5.0], [120.0, 120.0, 120.0])
 end
 
 ## 划分为两种还是三种

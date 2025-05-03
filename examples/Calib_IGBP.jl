@@ -1,6 +1,11 @@
 using PenmanMonteithLeuning, Ipaper, Test, RTableTools
 
 df_out, df, _par = deserialize(file_FLUXNET_CRO)
+
+_par = (α=0.03265625, η=0.069296875, g1=9.552734375,
+  VCmax25=17.671875, VPDmin=1.21515625, VPDmax=3.5, D0=0.6541015625,
+  kQ=0.10114375, kA=0.89921875, S_sls=0.01015625, fER0=0.152734375, hc=0.5)
+
 par = Param_PMLV2(; _par..., hc=0.5)
 df.GPP_obs = df.GPPobs
 df.ET_obs = df.ETobs

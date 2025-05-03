@@ -1,4 +1,4 @@
-using RTableTools, Ipaper, PML
+using RTableTools, Ipaper, PenmanMonteithLeuning
 using Plots
 import Base: NamedTuple
 NamedTuple(names::AbstractVector, values::AbstractVector) = 
@@ -16,7 +16,7 @@ site = "哀牢山"
 d = df[df.name.==site, :]
 
 parNames = [
-  :α, :η, :g1, :Am_25, :VPDmin, :VPDmax, :D0, :kQ, :kA, :S_sls, :fER0#, :d_pc # :hc
+  :α, :η, :g1, :VCmax25, :VPDmin, :VPDmax, :D0, :kQ, :kA, :S_sls, :fER0#, :d_pc # :hc
 ]
 
 function run_model(; site="",

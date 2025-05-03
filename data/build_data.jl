@@ -1,4 +1,4 @@
-using PML
+using PenmanMonteithLeuning
 
 
 function read_data()
@@ -26,7 +26,7 @@ site = "US-Twt"
 inds = findall(df.site .== site)
 d_out = df_out[inds, :]
 
-_par = (α=0.03265625, η=0.069296875, g1=9.552734375, Am_25=17.671875, VPDmin=1.21515625, VPDmax=3.5, D0=0.6541015625, kQ=0.10114375, kA=0.89921875, S_sls=0.01015625, fER0=0.152734375, hc=0.5)
+_par = (α=0.03265625, η=0.069296875, g1=9.552734375, VCmax25=17.671875, VPDmin=1.21515625, VPDmax=3.5, D0=0.6541015625, kQ=0.10114375, kA=0.89921875, S_sls=0.01015625, fER0=0.152734375, hc=0.5)
 
 df_out, df = read_data()
 

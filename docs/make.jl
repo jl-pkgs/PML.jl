@@ -62,7 +62,7 @@ makedocs(
     size_threshold=1024*1024,
     # canonical="https://jl-pkgs.github.io/PML.jl",
   ),
-  modules=[PML],
+  modules=[PenmanMonteithLeuning],
   sitename="PML.jl",
   pages=Any[
     "index.md",
