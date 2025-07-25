@@ -1,0 +1,43 @@
+# 2. NorthChina C3C4
+
+```{julia}
+using PenmanMonteithLeuning, Ipaper, Test, RTableTools
+
+dir_root = "$(@__DIR__)/../../" |> abspath
+data = fread("$dir_root/data/Forcing_C3C4_sp2.csv")
+replace_missing!(data)
+```
+```{julia}
+df = data[data.site.=="固城", :]
+# df = data[data.site.=="禹城", :]
+# df.ET_obs = df.ET_obs ./ 0.9
+par = par0
+r = PMLV2(df; par)
+
+parNames = [
+  :α, :η, :g1, :VCmax25, :VPDmin, :VPDmax, :D0, :kQ, :kA, :S_sls, :fER0 # :hc
+]
+theta, goal, flag = ModelCalib(df, par0, parNames)
+df_out = PMLV2_sites(df; par=theta2par(theta, parNames))
+```
+
+```{julia}
+sites = unique(df.site)
+RES = []
+for site in sites
+  inds = df.site .== site
+  d_obs = df[inds, :]
+  d_sim = df_out[inds, :]
+
+  gof = [
+    (; var="ET", GOF(d_obs.ET_obs, d_sim.ET)...),
+    (; var="GPP", GOF(d_obs.GPP_obs, d_sim.GPP)...)] |> DataFrame
+  gof = gof[:, [:var, :NSE, :KGE, :R2, :bias_perc, :n_valid]]
+  push!(RES, gof)
+end
+RES
+```
+
+**PML-ET**
+- 固城: 0.46
+- 禹城: 0.63

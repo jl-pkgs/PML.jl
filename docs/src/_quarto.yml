@@ -11,6 +11,7 @@ book:
     chapters:
         - index.md
         - 01-calib_site.qmd
+        - 02_NorthChina_C3C4_calib.qmd
         - z-index.qmd 
 
     navbar: 
