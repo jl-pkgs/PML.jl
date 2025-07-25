@@ -1,0 +1,22 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PML",
+    "section": "",
+    "text": "Reference\nPMLV2\n\ncal_Ei_Dijk2021\nphotosynthesis\naerodynamic_conductance\n\nModelCalib\nParam_PMLV2",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Reference</span>"
+    ]
+  },
+  {
+    "objectID": "z-index.html",
+    "href": "z-index.html",
+    "title": "Reference",
+    "section": "",
+    "text": "Docstrings for SpatRasters.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Reference</span>"
+    ]
+  }
+]
