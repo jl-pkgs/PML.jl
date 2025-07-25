@@ -1,0 +1,20 @@
+---
+number-depth: 2
+---
+
+# Reference
+
+_Docstrings for SpatRasters._
+
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using PenmanMonteithLeuning
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.autodoc(PenmanMonteithLeuning)
+```

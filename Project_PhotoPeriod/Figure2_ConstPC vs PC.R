@@ -3,6 +3,13 @@ pacman::p_load(
   ggplot2, gg.layers, ggrepel
 )
 
+f = "./OUTPUT/PMLV2China_flux37_LAI_glass,ConstPC_gof.csv"
+d = fread(f)
+
+sites = c("儋州", "哀牢山", "西双版纳-Rubber", "西双版纳-EBF", "鼎湖山")
+d[site %in% sites, ]
+
+
 # dat[GLASS <= -2]
 set_font()
 

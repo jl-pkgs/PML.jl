@@ -1,0 +1,64 @@
+project:
+    type: book
+    output-dir: "../build"
+
+book:
+    title: "SpatRasters"
+    author: 
+        name: "Dongdong Kong"
+        email: "kongdd@users.noreply.github.com"
+    date: "2025-06-29"
+    chapters:
+        - index.md
+        # - api/1-SpatRaster.qmd
+        # - api/2-bbox.qmd
+        # - api/3-IO.qmd
+        # - api/4-Operation.qmd
+        # - api/5-Interp.qmd
+        - z-index.qmd 
+
+    navbar: 
+        background: primary
+        right: 
+        - text: Version
+          menu: 
+            - text: dev
+        
+    search: 
+        location: sidebar
+        type: textbox
+
+    twitter-card: true
+    open-graph: true
+    repo-url: https://github.com/jl-pkgs/SpatRasters.jl
+    repo-actions: [issue]
+
+toc-title: "Table of Contents"
+
+execute:
+    echo: false
+    output: true
+    cache: false
+    freeze: false
+
+bibliography: references.bib
+
+format:
+    html:
+        include-in-header: 
+            file: _static/versions.html
+        code-link: true
+        number-sections: false
+        css: _static/style.css
+        resources: 
+            - _static/style.css
+            - _static/versions.html
+            - _static/theme.scss
+        theme: 
+            light: 
+                - _static/theme.scss
+                - default
+            dark: 
+                - _static/theme.scss
+                - darkly
+    
