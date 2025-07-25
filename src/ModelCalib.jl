@@ -1,6 +1,5 @@
 export ModelCalib, ModelCalib_IGBPs
-export model_goal
-export model_gof
+export model_goal, model_gof
 
 include("DataType.jl")
 

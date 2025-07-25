@@ -1,11 +1,16 @@
-#nb # %% A slide [markdown] {"slideshow": {"slide_type": "slide"}}
-# # Calibrate PMLV2 model using FLUXNET data
-# > US Twt (CRO, 2009)
+# Calibration for site
+
+Calibrate PMLV2 model using FLUXNET data
+
+> US Twt (CRO, 2009)
+
+```{julia}
 using PenmanMonteithLeuning, Ipaper
 
-#nb # %% A slide [markdown] {"slideshow": {"slide_type": "slide"}}
 df_out, df, _par = deserialize(file_FLUXNET_CRO_USTwt)
+```
 
+```{julia}
 _par = (α=0.03265625, η=0.069296875, g1=9.552734375,
   VCmax25=17.671875, VPDmin=1.21515625, VPDmax=3.5, D0=0.6541015625,
   kQ=0.10114375, kA=0.89921875, S_sls=0.01015625, fER0=0.152734375, hc=0.5)
@@ -13,29 +18,31 @@ _par = (α=0.03265625, η=0.069296875, g1=9.552734375,
 par = Param_PMLV2(; _par..., hc=0.5)
 df.GPP_obs = df.GPPobs
 df.ET_obs = df.ETobs
+```
 
-# ## 模型参数率定
+## 1.1 模型参数率定
+```{julia}
 parNames = [
   :α, :η, :g1, :VCmax25, :VPDmin, :VPDmax, :D0, :kQ, :kA, :S_sls, :fER0 # :hc
 ]
 
-#nb # %% A slide [markdown] {"slideshow": {"slide_type": "fragment"}}
 theta, goal, flag = ModelCalib(df, par0, parNames)
 df_out = PMLV2_sites(df; par=theta2par(theta, parNames))
 df_out[1:10, :]
+```
 
-# ## 拟合优度
 
-#nb %% A slide [code] {"slideshow": {"slide_type": "fragment"}}
+## 1.2 拟合优度
+```{julia}
 gof = [
   (; var="ET", GOF(df.ET_obs, df_out.ET)...),
   (; var="GPP", GOF(df.GPP_obs, df_out.GPP)...)] |> DataFrame
 DataFrame(gof)
+```
 
+## 1.3 绘图
 
-# ## 绘图
-
-#nb # %% A slide [markdown] {"slideshow": {"slide_type": "fragment"}}
+```{julia}
 using Plots
 gr(framestyle=:box, titlefontsize=12)
 t = df.date
@@ -68,5 +75,6 @@ plot(
   plot_var(:Pi; title="P - Ei (mm/d)"),
   plot_var(:Es_eq; title="Es_eq (mm/d)"),
   size=(800, 700),
-  layout=(4, 2), 
+  layout=(4, 2),
 )
+```

@@ -1,6 +1,6 @@
 # export struct2vec, struct2tuple
 export round2;
-export movmean2, nanmean2, getDataType, replace_miss
+export movmean2, nanmean2, getDataType
 export map_df_tuple
 
 # rounded_data = NamedTuple((field => round(value) for (field, value) in data))
@@ -38,10 +38,6 @@ function nanmean2(x::T1, y::T2) where {T1<:Real, T2<:Real}
   end
 end
 
-# function replace_miss(x::AbstractVector, miss=NaN)
-#   x[ismissing.(x)] .= miss
-#   x
-# end
 
 function getDataType(x)
   type = eltype(x)
