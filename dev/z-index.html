@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +65,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./01-calib_site.html" rel="prev">
+<link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -404,11 +439,6 @@ window.onload = function () {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01-calib_site.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Calibration for site</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./z-index.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Reference</span></a>
   </div>
 </li>
@@ -417,8 +447,50 @@ window.onload = function () {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#dataframe" id="toc-dataframe" class="nav-link active" data-scroll-target="#dataframe"><code>DataFrame</code></a></li>
+  <li><a href="#gof" id="toc-gof" class="nav-link" data-scroll-target="#gof"><code>GOF</code></a></li>
+  <li><a href="#modelcalib" id="toc-modelcalib" class="nav-link" data-scroll-target="#modelcalib"><code>ModelCalib</code></a></li>
+  <li><a href="#modelcalib_igbps" id="toc-modelcalib_igbps" class="nav-link" data-scroll-target="#modelcalib_igbps"><code>ModelCalib_IGBPs</code></a></li>
+  <li><a href="#pmlv2" id="toc-pmlv2" class="nav-link" data-scroll-target="#pmlv2"><code>PMLV2</code></a></li>
+  <li><a href="#pmlv2_sites" id="toc-pmlv2_sites" class="nav-link" data-scroll-target="#pmlv2_sites"><code>PMLV2_sites</code></a></li>
+  <li><a href="#parnames" id="toc-parnames" class="nav-link" data-scroll-target="#parnames"><code>ParNames</code></a></li>
+  <li><a href="#param_pmlv2" id="toc-param_pmlv2" class="nav-link" data-scroll-target="#param_pmlv2"><code>Param_PMLV2</code></a></li>
+  <li><a href="#penmanmonteithleuning" id="toc-penmanmonteithleuning" class="nav-link" data-scroll-target="#penmanmonteithleuning"><code>PenmanMonteithLeuning</code></a></li>
+  <li><a href="#t_adjust_vm25" id="toc-t_adjust_vm25" class="nav-link" data-scroll-target="#t_adjust_vm25"><code>T_adjust_Vm25</code></a></li>
+  <li><a href="#aerodynamic_conductance" id="toc-aerodynamic_conductance" class="nav-link" data-scroll-target="#aerodynamic_conductance"><code>aerodynamic_conductance</code></a></li>
+  <li><a href="#bounds" id="toc-bounds" class="nav-link" data-scroll-target="#bounds"><code>bounds</code></a></li>
+  <li><a href="#cal_ei_dijk2021" id="toc-cal_ei_dijk2021" class="nav-link" data-scroll-target="#cal_ei_dijk2021"><code>cal_Ei_Dijk2021</code></a></li>
+  <li><a href="#f_vpd_zhang2019" id="toc-f_vpd_zhang2019" class="nav-link" data-scroll-target="#f_vpd_zhang2019"><code>f_VPD_Zhang2019</code></a></li>
+  <li><a href="#file_fluxnet_cro" id="toc-file_fluxnet_cro" class="nav-link" data-scroll-target="#file_fluxnet_cro"><code>file_FLUXNET_CRO</code></a></li>
+  <li><a href="#file_fluxnet_cro_ustwt" id="toc-file_fluxnet_cro_ustwt" class="nav-link" data-scroll-target="#file_fluxnet_cro_ustwt"><code>file_FLUXNET_CRO_USTwt</code></a></li>
+  <li><a href="#fread" id="toc-fread" class="nav-link" data-scroll-target="#fread"><code>fread</code></a></li>
+  <li><a href="#fwrite" id="toc-fwrite" class="nav-link" data-scroll-target="#fwrite"><code>fwrite</code></a></li>
+  <li><a href="#getdatatype" id="toc-getdatatype" class="nav-link" data-scroll-target="#getdatatype"><code>getDataType</code></a></li>
+  <li><a href="#get_bounds" id="toc-get_bounds" class="nav-link" data-scroll-target="#get_bounds"><code>get_bounds</code></a></li>
+  <li><a href="#hc_raw" id="toc-hc_raw" class="nav-link" data-scroll-target="#hc_raw"><code>hc_raw</code></a></li>
+  <li><a href="#interm_pml" id="toc-interm_pml" class="nav-link" data-scroll-target="#interm_pml"><code>interm_PML</code></a></li>
+  <li><a href="#map_df_tuple" id="toc-map_df_tuple" class="nav-link" data-scroll-target="#map_df_tuple"><code>map_df_tuple</code></a></li>
+  <li><a href="#melt_list" id="toc-melt_list" class="nav-link" data-scroll-target="#melt_list"><code>melt_list</code></a></li>
+  <li><a href="#model_goal" id="toc-model_goal" class="nav-link" data-scroll-target="#model_goal"><code>model_goal</code></a></li>
+  <li><a href="#model_gof" id="toc-model_gof" class="nav-link" data-scroll-target="#model_gof"><code>model_gof</code></a></li>
+  <li><a href="#movmean2" id="toc-movmean2" class="nav-link" data-scroll-target="#movmean2"><code>movmean2</code></a></li>
+  <li><a href="#nanmean2" id="toc-nanmean2" class="nav-link" data-scroll-target="#nanmean2"><code>nanmean2</code></a></li>
+  <li><a href="#output_pml" id="toc-output_pml" class="nav-link" data-scroll-target="#output_pml"><code>output_PML</code></a></li>
+  <li><a href="#par0" id="toc-par0" class="nav-link" data-scroll-target="#par0"><code>par0</code></a></li>
+  <li><a href="#photosynthesis" id="toc-photosynthesis" class="nav-link" data-scroll-target="#photosynthesis"><code>photosynthesis</code></a></li>
+  <li><a href="#round2" id="toc-round2" class="nav-link" data-scroll-target="#round2"><code>round2</code></a></li>
+  <li><a href="#select_param" id="toc-select_param" class="nav-link" data-scroll-target="#select_param"><code>select_param</code></a></li>
+  <li><a href="#theta0" id="toc-theta0" class="nav-link" data-scroll-target="#theta0"><code>theta0</code></a></li>
+  <li><a href="#theta2par" id="toc-theta2par" class="nav-link" data-scroll-target="#theta2par"><code>theta2par</code></a></li>
+  <li><a href="#theta2param" id="toc-theta2param" class="nav-link" data-scroll-target="#theta2param"><code>theta2param</code></a></li>
+  <li><a href="#to_mat" id="toc-to_mat" class="nav-link" data-scroll-target="#to_mat"><code>to_mat</code></a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/jl-pkgs/PML.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -444,8 +516,1064 @@ window.onload = function () {
 
 
 <p><em>Docstrings for SpatRasters.</em></p>
+<section id="dataframe" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe"><code>DataFrame</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>DataFrame &lt;: AbstractDataFrame</code></pre>
+<p>An <code>AbstractDataFrame</code> that stores a set of named columns.</p>
+<p>The columns are normally <code>AbstractVector</code>s stored in memory, particularly a <code>Vector</code>, <code>PooledVector</code> or <code>CategoricalVector</code>.</p>
+<section id="constructors" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="constructors">Constructors</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(pairs<span class="op">::</span><span class="dt">Pair...</span>; makeunique<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">false</span>, copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(pairs<span class="op">::</span><span class="dt">AbstractVector{&lt;:Pair}</span>; makeunique<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">false</span>, copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(ds<span class="op">::</span><span class="dt">AbstractDict</span>; copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(; kwargs<span class="op">...</span>, copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(table; copycols<span class="op">::</span><span class="dt">Union{Bool, Nothing}</span>=<span class="cn">nothing</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(table, names<span class="op">::</span><span class="dt">AbstractVector</span>;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>          makeunique<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">false</span>, copycols<span class="op">::</span><span class="dt">Union{Bool, Nothing}</span>=<span class="cn">nothing</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(columns<span class="op">::</span><span class="dt">AbstractVecOrMat</span>, names<span class="op">::</span><span class="dt">AbstractVector</span>;</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>          makeunique<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">false</span>, copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(<span class="op">::</span><span class="dt">DataFrameRow</span>; copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(<span class="op">::</span><span class="dt">GroupedDataFrame</span>; copycols<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>, keepkeys<span class="op">::</span><span class="dt">Bool</span>=<span class="cn">true</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="keyword-arguments" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="keyword-arguments">Keyword arguments</h3>
+<ul>
+<li><code>copycols</code> : whether vectors passed as columns should be copied; by default set to <code>true</code> and the vectors are copied; if set to <code>false</code> then the constructor will still copy the passed columns if it is not possible to construct a <code>DataFrame</code> without materializing new columns. Note the <code>copycols=nothing</code> default in the Tables.jl compatible constructor; it is provided as certain input table types may have already made a copy of columns or the columns may otherwise be immutable, in which case columns are not copied by default. To force a copy in such cases, or to get mutable columns from an immutable input table (like <code>Arrow.Table</code>), pass <code>copycols=true</code> explicitly.</li>
+<li><code>makeunique</code> : if <code>false</code> (the default), an error will be raised</li>
+</ul>
+<p>(note that not all constructors support these keyword arguments)</p>
+</section>
+<section id="details-on-behavior-of-different-constructors" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="details-on-behavior-of-different-constructors">Details on behavior of different constructors</h3>
+<p>It is allowed to pass a vector of <code>Pair</code>s, a list of <code>Pair</code>s as positional arguments, or a list of keyword arguments. In this case each pair is considered to represent a column name to column value mapping and column name must be a <code>Symbol</code> or string. Alternatively a dictionary can be passed to the constructor in which case its entries are considered to define the column name and column value pairs. If the dictionary is a <code>Dict</code> then column names will be sorted in the returned <code>DataFrame</code>.</p>
+<p>In all the constructors described above column value can be a vector which is consumed as is or an object of any other type (except <code>AbstractArray</code>). In the latter case the passed value is automatically repeated to fill a new vector of the appropriate length. As a particular rule values stored in a <code>Ref</code> or a <code>0</code>-dimensional <code>AbstractArray</code> are unwrapped and treated in the same way.</p>
+<p>It is also allowed to pass a vector of vectors or a matrix as as the first argument. In this case the second argument must be a vector of <code>Symbol</code>s or strings specifying column names, or the symbol <code>:auto</code> to generate column names <code>x1</code>, <code>x2</code>, … automatically. Note that in this case if the first argument is a matrix and <code>copycols=false</code> the columns of the created <code>DataFrame</code> will be views of columns the source matrix.</p>
+<p>If a single positional argument is passed to a <code>DataFrame</code> constructor then it is assumed to be of type that implements the <a href="https://github.com/JuliaData/Tables.jl">Tables.jl</a> interface using which the returned <code>DataFrame</code> is materialized.</p>
+<p>If two positional arguments are passed, where the second argument is an <code>AbstractVector</code>, then the first argument is taken to be a table as described in the previous paragraph, and columns names of the resulting data frame are taken from the vector passed as the second positional argument.</p>
+<p>Finally it is allowed to construct a <code>DataFrame</code> from a <code>DataFrameRow</code> or a <code>GroupedDataFrame</code>. In the latter case the <code>keepkeys</code> keyword argument specifies whether the resulting <code>DataFrame</code> should contain the grouping columns of the passed <code>GroupedDataFrame</code> and the order of rows in the result follows the order of groups in the <code>GroupedDataFrame</code> passed.</p>
+</section>
+<section id="notes" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="notes">Notes</h3>
+<p>The <code>DataFrame</code> constructor by default copies all columns vectors passed to it. Pass the <code>copycols=false</code> keyword argument (where supported) to reuse vectors without copying them.</p>
+<p>By default an error will be raised if duplicates in column names are found. Pass <code>makeunique=true</code> keyword argument (where supported) to accept duplicate names, in which case they will be suffixed with <code>_i</code> (<code>i</code> starting at 1 for the first duplicate).</p>
+<p>If an <code>AbstractRange</code> is passed to a <code>DataFrame</code> constructor as a column it is always collected to a <code>Vector</code> (even if <code>copycols=false</code>). As a general rule <code>AbstractRange</code> values are always materialized to a <code>Vector</code> by all functions in DataFrames.jl before being stored in a <code>DataFrame</code>.</p>
+<p><code>DataFrame</code> can store only columns that use 1-based indexing. Attempting to store a vector using non-standard indexing raises an error.</p>
+<p>The <code>DataFrame</code> type is designed to allow column types to vary and to be dynamically changed also after it is constructed. Therefore <code>DataFrame</code>s are not type stable. For performance-critical code that requires type-stability either use the functionality provided by <code>select</code>/<code>transform</code>/<code>combine</code> functions, use <code>Tables.columntable</code> and <code>Tables.namedtupleiterator</code> functions, use barrier functions, or provide type assertions to the variables that hold columns extracted from a <code>DataFrame</code>.</p>
+<p>Metadata: this function preserves all table and column-level metadata. As a special case if a <code>GroupedDataFrame</code> is passed then only <code>:note</code>-style metadata from parent of the <code>GroupedDataFrame</code> is preserved.</p>
+</section>
+<section id="examples" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples">Examples</h3>
+<pre class="jldoctest"><code>julia&gt; DataFrame((a=[1, 2], b=[3, 4])) # Tables.jl table constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      3
+   2 │     2      4
+
+julia&gt; DataFrame([(a=1, b=0), (a=2, b=0)]) # Tables.jl table constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0
+
+julia&gt; DataFrame("a" =&gt; 1:2, "b" =&gt; 0) # Pair constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0
+
+julia&gt; DataFrame([:a =&gt; 1:2, :b =&gt; 0]) # vector of Pairs constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0
+
+julia&gt; DataFrame(Dict(:a =&gt; 1:2, :b =&gt; 0)) # dictionary constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0
+
+julia&gt; DataFrame(a=1:2, b=0) # keyword argument constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0
+
+julia&gt; DataFrame([[1, 2], [0, 0]], [:a, :b]) # vector of vectors constructor
+2×2 DataFrame
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0
+
+julia&gt; DataFrame([1 0; 2 0], :auto) # matrix constructor
+2×2 DataFrame
+ Row │ x1     x2
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      0
+   2 │     2      0</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="gof" class="level2">
+<h2 class="anchored" data-anchor-id="gof"><code>GOF</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>HydroTools.GOF</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "GOF" from HydroTools:
+ [1] GOF(obs::AbstractVector{T}, sim::AbstractVector{T}) where T&lt;:Real
+     @ ~/.julia/packages/HydroTools/DJBjN/src/GOF.jl:67</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="modelcalib" class="level2">
+<h2 class="anchored" data-anchor-id="modelcalib"><code>ModelCalib</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>ModelCalib(df::AbstractDataFrame, par0::AbstractETParam; 
+    IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="modelcalib_igbps" class="level2">
+<h2 class="anchored" data-anchor-id="modelcalib_igbps"><code>ModelCalib_IGBPs</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.ModelCalib_IGBPs</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "ModelCalib_IGBPs" from PenmanMonteithLeuning:
+ [1] ModelCalib_IGBPs(data::DataFrames.AbstractDataFrame; parNames, of_gof, maxn)
+     @ ~/work/PML.jl/PML.jl/src/ModelCalib.jl:6</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="pmlv2" class="level2">
+<h2 class="anchored" data-anchor-id="pmlv2"><code>PMLV2</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model</code></pre>
+<section id="arguments" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments">Arguments</h3>
+<ul>
+<li><code>Prcp</code> : mm/d</li>
+<li><code>Tavg</code> : degC</li>
+<li><code>Rs</code> : W m-2</li>
+<li><code>Rn</code> : W m-2</li>
+<li><code>VPD</code> : W m-2</li>
+<li><code>U2</code> : m/s</li>
+<li><code>LAI</code> : m2 m-2</li>
+<li><code>Pa</code> : kPa</li>
+<li><code>Ca</code> : ppm, default <code>380</code></li>
+<li><code>Ω</code> : clamping index, default is <code>1.0</code></li>
+</ul>
+</section>
+<section id="examples-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples-1">Examples</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="references" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="references">References</h3>
+<ol type="1">
+<li>Gan Rong, 2018, Ecohydrology</li>
+<li>Zhang Yongqiang, 2019, RSE</li>
+<li>Kong Dongdong, 2019, ISPRS</li>
+</ol>
+<pre><code>PMLV2(Prcp, Tavg, Rs, Rn, VPD, U2, LAI, Pa, Ca; par=param0, frame=3)</code></pre>
+</section>
+<section id="notes-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="notes-1">Notes</h3>
+<p>一个站点的计算。注意，不同植被类型，参数不同。</p>
+</section>
+<section id="arguments-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments-1">Arguments</h3>
+<ul>
+<li><code>frame</code>: in 8-days</li>
+</ul>
+</section>
+<section id="arguments-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments-2">Arguments</h3>
+<ul>
+<li><p><code>kw</code>: named keyword arguments</p>
+<ul>
+<li><code>r</code>: <code>interm_PML</code></li>
+</ul></li>
+</ul>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="pmlv2_sites" class="level2">
+<h2 class="anchored" data-anchor-id="pmlv2_sites"><code>PMLV2_sites</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.PMLV2_sites</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "PMLV2_sites" from PenmanMonteithLeuning:
+ [1] PMLV2_sites(df::DataFrames.AbstractDataFrame; par, kw...)
+     @ ~/work/PML.jl/PML.jl/src/PMLV2.jl:134</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="parnames" class="level2">
+<h2 class="anchored" data-anchor-id="parnames"><code>ParNames</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.ParNames</code> is of type <code>Vector{Symbol}</code>.</p>
+<section id="summary" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary">Summary</h3>
+<pre><code>mutable struct Vector{Symbol}</code></pre>
+</section>
+<section id="fields" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields">Fields</h3>
+<pre><code>ref  :: MemoryRef{Symbol}
+size :: Tuple{Int64}</code></pre>
+</section>
+<section id="supertype-hierarchy" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="supertype-hierarchy">Supertype Hierarchy</h3>
+<pre><code>Vector{Symbol} &lt;: DenseVector{Symbol} &lt;: AbstractVector{Symbol} &lt;: Any</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="param_pmlv2" class="level2">
+<h2 class="anchored" data-anchor-id="param_pmlv2"><code>Param_PMLV2</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>struct Param_PMLV2{FT&lt;:AbstractFloat} &lt;: AbstractETParam{FT}</code></pre>
+<section id="fields-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields-1">Fields</h3>
+<ul>
+<li><code>α::Real</code>: initial slope of the light response curve to assimilation rate, (i.e., quantum efficiency; <code>μmol CO2 [μmol PAR]⁻¹</code>)` Default: 0.06</li>
+<li><code>η::Real</code>: initial slope of the CO2 response curve to assimilation rate, (i.e., carboxylation efficiency; <code>μmol m⁻² s⁻¹ [μmol m⁻² s⁻¹]⁻¹</code>) Default: 0.04</li>
+<li><code>g1::Real</code>: stomatal conductance coefficient, <code>μmol m⁻² s⁻¹</code> Default: 10.0</li>
+<li><code>VCmax25::Real</code>: carbon saturated rate of photosynthesis at 25 °C, <code>μmol m⁻² s⁻¹</code> Default: 50.0</li>
+<li><code>VPDmin::Real</code>: parameter to constrain <code>gc</code>, kPa Default: 0.9</li>
+<li><code>VPDmax::Real</code>: parameter to constrain <code>gc</code>, kPa Default: 4.0</li>
+<li><code>D0::Real</code>: 水汽压参数 Default: 0.7</li>
+<li><code>kQ::Real</code>: extinction coefficients for visible radiation Default: 0.45</li>
+<li><code>kA::Real</code>: extinction coefficients for available energy Default: 0.7</li>
+<li><code>S_sls::Real</code>: Specific leaf storage, van Dijk, A.I.J.M, 2001, Eq2 Default: 0.1</li>
+<li><code>fER0::Real</code>: Canopy cover fraction related parameter Default: 0.1</li>
+<li><code>hc::Real</code>: canopy height, <code>[m]</code> Default: 1.0</li>
+<li><code>d_pc::Real</code>: photoperiod constraint Default: 2.0</li>
+<li><code>_hc::Vector{FT} where FT&lt;:Real</code>: Default: [1.0, 1.0, 1.0]</li>
+<li><code>_η::Vector{FT} where FT&lt;:Real</code>: Default: [0.04, 0.04, 0.04]</li>
+<li><code>_α::Vector{FT} where FT&lt;:Real</code>: Default: [0.06, 0.06, 0.06]</li>
+<li><code>_g1::Vector{FT} where FT&lt;:Real</code>: Default: [10.0, 10.0, 10.0]</li>
+<li><code>_VCmax25::Vector{FT} where FT&lt;:Real</code>: Default: [50.0, 50.0, 50.0]</li>
+</ul>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="penmanmonteithleuning" class="level2">
+<h2 class="anchored" data-anchor-id="penmanmonteithleuning"><code>PenmanMonteithLeuning</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No docstring found for public module <code>PenmanMonteithLeuning</code>.</p>
+<section id="public-names" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="public-names">Public names</h3>
+<p><code>DataFrame</code>, <code>GOF</code>, <code>ModelCalib</code>, <code>ModelCalib_IGBPs</code>, <code>PMLV2</code>, <code>PMLV2_sites</code>, <code>ParNames</code>, <code>Param_PMLV2</code>, <code>T_adjust_Vm25</code>, <code>aerodynamic_conductance</code>, <code>bounds</code>, <code>cal_Ei_Dijk2021</code>, <code>f_VPD_Zhang2019</code>, <code>file_FLUXNET_CRO</code>, <code>file_FLUXNET_CRO_USTwt</code>, <code>fread</code>, <code>fwrite</code>, <code>getDataType</code>, <code>get_bounds</code>, <code>hc_raw</code>, <code>interm_PML</code>, <code>map_df_tuple</code>, <code>melt_list</code>, <code>model_goal</code>, <code>model_gof</code>, <code>movmean2</code>, <code>nanmean2</code>, <code>output_PML</code>, <code>par0</code>, <code>photosynthesis</code>, <code>round2</code>, <code>select_param</code>, <code>theta0</code>, <code>theta2par</code>, <code>theta2param</code>, <code>to_mat</code></p>
+</section>
+<section id="displaying-contents-of-readme-found-at-homerunnerworkpml.jlpml.jlreadme.md" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="displaying-contents-of-readme-found-at-homerunnerworkpml.jlpml.jlreadme.md">Displaying contents of readme found at <code>/home/runner/work/PML.jl/PML.jl/README.md</code></h3>
+</section>
+<section id="penman-monteith-leuning-pml-evapotranspiration-in-julia" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="penman-monteith-leuning-pml-evapotranspiration-in-julia">Penman-Monteith-Leuning (PML) Evapotranspiration in Julia</h3>
+<p><a href="https://jl-pkgs.github.io/PML.jl/stable"><img src="https://img.shields.io/badge/docs-stable-blue.svg" class="img-fluid" alt="Stable"></a> <a href="https://jl-pkgs.github.io/PML.jl/dev"><img src="https://img.shields.io/badge/docs-dev-blue.svg" class="img-fluid" alt="Dev"></a> <a href="https://github.com/jl-pkgs/PML.jl/actions/workflows/CI.yml"><img src="https://github.com/jl-pkgs/PML.jl/actions/workflows/CI.yml/badge.svg" class="img-fluid" alt="CI"></a> <a href="https://codecov.io/gh/jl-pkgs/PML.jl/tree/master"><img src="https://codecov.io/gh/jl-pkgs/PML.jl/branch/master/graph/badge.svg?token=RmFYanlaQM" class="img-fluid" alt="codecov"></a></p>
+<section id="todo" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="todo">TODO</h4>
+<section id="冠层结构" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="冠层结构">冠层结构</h5>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="">大叶模型</label></li>
+<li><label><input type="checkbox">双大叶模型</label></li>
+<li><label><input type="checkbox">双叶模型</label></li>
+<li><label><input type="checkbox">多层树冠模型</label></li>
+</ul>
+</section>
+<section id="模型结构" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="模型结构">模型结构</h5>
+<ul class="task-list">
+<li><label><input type="checkbox">单独率定GPP</label></li>
+<li><label><input type="checkbox">小时尺度模型构建，解析蒸发信号</label></li>
+<li><label><input type="checkbox">土壤水限制方案</label></li>
+</ul>
+</section>
+<section id="模型表现" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="模型表现">模型表现</h5>
+<ul class="task-list">
+<li><label><input type="checkbox">1. 检查<code>PMLV2</code>敏感性参数</label></li>
+<li><label><input type="checkbox">2. 测试LAI除噪的效果</label></li>
+<li><label><input type="checkbox">3. 双生长季，WIP</label></li>
+<li><label><input type="checkbox">4. C3/C4</label></li>
+</ul>
+</section>
+</section>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="t_adjust_vm25" class="level2">
+<h2 class="anchored" data-anchor-id="t_adjust_vm25"><code>T_adjust_Vm25</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.T_adjust_Vm25</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "T_adjust_Vm25" from PenmanMonteithLeuning:
+ [1] T_adjust_Vm25(Tavg::T) where T&lt;:Real
+     @ ~/work/PML.jl/PML.jl/src/photosynthesis.jl:47</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="aerodynamic_conductance" class="level2">
+<h2 class="anchored" data-anchor-id="aerodynamic_conductance"><code>aerodynamic_conductance</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>aerodynamic_conductance(U2, hc)</code></pre>
+<section id="arguments-3" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments-3">Arguments</h3>
+<ul>
+<li><code>U2</code>: wind speed at 2m</li>
+<li><code>hc</code>: canopy height</li>
+</ul>
+</section>
+<section id="return" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="return">Return</h3>
+<ul>
+<li><code>Ga</code>: aerodynamic conductance in m/s</li>
+</ul>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="bounds" class="level2">
+<h2 class="anchored" data-anchor-id="bounds"><code>bounds</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for private symbol.</p>
+<p><code>FieldMetadata.bounds</code> is a <code>Function</code>.</p>
+<pre><code># 27 methods for generic function "bounds" from FieldMetadata:
+  [1] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:α}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [2] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:_g1}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [3] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:g1}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [4] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:kA}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [5] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:VPDmin}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [6] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:D0}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [7] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:_hc}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [8] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:kQ}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+  [9] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:VPDmax}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [10] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:d_pc}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [11] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:_α}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [12] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:_VCmax25}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [13] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:S_sls}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [14] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:fER0}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [15] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:_η}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [16] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:hc}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [17] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:η}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [18] bounds(::Type{&lt;:Param_PMLV2}, ::Type{Val{:VCmax25}})
+     @ PenmanMonteithLeuning ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:214
+ [19] bounds(::Type{var"#214#X"}, keys::Tuple{}) where var"#214#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:66
+ [20] bounds(::Type{var"#211#X"}, keys::Tuple) where var"#211#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:64
+ [21] bounds(x::Type, key::Type)
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:56
+ [22] bounds(::Type{var"#204#X"}, key::Symbol) where var"#204#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:59
+ [23] bounds(x::Type{var"#208#X"}) where var"#208#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:63
+ [24] bounds(::var"#198#X", key::Symbol) where var"#198#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:57
+ [25] bounds(::var"#201#X", key::Type) where var"#201#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:58
+ [26] bounds(x, key)
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:55
+ [27] bounds(::var"#206#X") where var"#206#X"
+     @ ~/.julia/packages/FieldMetadata/oeQwS/src/FieldMetadata.jl:62</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="cal_ei_dijk2021" class="level2">
+<h2 class="anchored" data-anchor-id="cal_ei_dijk2021"><code>cal_Ei_Dijk2021</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>cal_Ei_Dijk2021(Prcp::T, LAI::T, par::Param_PMLV2) where {T&lt;:Real}</code></pre>
+<section id="references-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="references-1">References</h3>
+<ol type="1">
+<li>van Dijk, A.I.J.M, 2001, Eq2.</li>
+</ol>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="f_vpd_zhang2019" class="level2">
+<h2 class="anchored" data-anchor-id="f_vpd_zhang2019"><code>f_VPD_Zhang2019</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.f_VPD_Zhang2019</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "f_VPD_Zhang2019" from PenmanMonteithLeuning:
+ [1] f_VPD_Zhang2019(VPD::T, par::Param_PMLV2) where T&lt;:Real
+     @ ~/work/PML.jl/PML.jl/src/water_constrain.jl:2</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="file_fluxnet_cro" class="level2">
+<h2 class="anchored" data-anchor-id="file_fluxnet_cro"><code>file_FLUXNET_CRO</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.file_FLUXNET_CRO</code> is of type <code>String</code>.</p>
+<section id="summary-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-1">Summary</h3>
+<pre><code>mutable struct String</code></pre>
+</section>
+<section id="supertype-hierarchy-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="supertype-hierarchy-1">Supertype Hierarchy</h3>
+<pre><code>String &lt;: AbstractString &lt;: Any</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="file_fluxnet_cro_ustwt" class="level2">
+<h2 class="anchored" data-anchor-id="file_fluxnet_cro_ustwt"><code>file_FLUXNET_CRO_USTwt</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.file_FLUXNET_CRO_USTwt</code> is of type <code>String</code>.</p>
+<section id="summary-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-2">Summary</h3>
+<pre><code>mutable struct String</code></pre>
+</section>
+<section id="supertype-hierarchy-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="supertype-hierarchy-2">Supertype Hierarchy</h3>
+<pre><code>String &lt;: AbstractString &lt;: Any</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="fread" class="level2">
+<h2 class="anchored" data-anchor-id="fread"><code>fread</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>fread(file::AbstractString; header=true, kw...)</code></pre>
+<section id="arguments-4" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments-4">Arguments</h3>
+<ul>
+<li><code>file</code>: the csv file to read</li>
+<li><code>header</code>: whether the csv file has header?</li>
+<li><code>kw</code>: other parameters for <code>CSV.File</code></li>
+</ul>
+</section>
+<section id="examaple" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examaple">Examaple</h3>
+<pre><code>fread("a.csv")</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="fwrite" class="level2">
+<h2 class="anchored" data-anchor-id="fwrite"><code>fwrite</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>fwrite(df, file; kw...)</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> <span class="fu">DataFrame</span>(A<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, B<span class="op">=</span><span class="fl">4</span><span class="op">:</span><span class="fl">6</span>, C<span class="op">=</span><span class="fl">7</span><span class="op">:</span><span class="fl">9</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(df, <span class="st">"a.csv"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(df, <span class="st">"a.csv"</span>, append<span class="op">=</span><span class="cn">true</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="getdatatype" class="level2">
+<h2 class="anchored" data-anchor-id="getdatatype"><code>getDataType</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.getDataType</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "getDataType" from PenmanMonteithLeuning:
+ [1] getDataType(x)
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:42</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="get_bounds" class="level2">
+<h2 class="anchored" data-anchor-id="get_bounds"><code>get_bounds</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.get_bounds</code> is a <code>Function</code>.</p>
+<pre><code># 2 methods for generic function "get_bounds" from PenmanMonteithLeuning:
+ [1] get_bounds(parNames::Vector{Symbol})
+     @ ~/work/PML.jl/PML.jl/src/Parameter.jl:65
+ [2] get_bounds()
+     @ ~/work/PML.jl/PML.jl/src/Parameter.jl:65</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="hc_raw" class="level2">
+<h2 class="anchored" data-anchor-id="hc_raw"><code>hc_raw</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.hc_raw</code> is of type <code>Vector{Float64}</code>.</p>
+<section id="summary-3" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-3">Summary</h3>
+<pre><code>mutable struct Vector{Float64}</code></pre>
+</section>
+<section id="fields-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields-2">Fields</h3>
+<pre><code>ref  :: MemoryRef{Float64}
+size :: Tuple{Int64}</code></pre>
+</section>
+<section id="supertype-hierarchy-3" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="supertype-hierarchy-3">Supertype Hierarchy</h3>
+<pre><code>Vector{Float64} &lt;: DenseVector{Float64} &lt;: AbstractVector{Float64} &lt;: Any</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="interm_pml" class="level2">
+<h2 class="anchored" data-anchor-id="interm_pml"><code>interm_PML</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<section id="summary-4" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-4">Summary</h3>
+<pre><code>mutable struct interm_PML{T}</code></pre>
+</section>
+<section id="fields-3" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields-3">Fields</h3>
+<pre><code>ET        :: T
+GPP       :: T
+Ec        :: T
+Ecr       :: T
+Eca       :: T
+Ei        :: T
+Pi        :: T
+Es_eq     :: T
+Eeq       :: T
+ET_water  :: T
+Ga        :: T
+Gc_w      :: T
+fval_soil :: T
+Es        :: T</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="map_df_tuple" class="level2">
+<h2 class="anchored" data-anchor-id="map_df_tuple"><code>map_df_tuple</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.map_df_tuple</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "map_df_tuple" from PenmanMonteithLeuning:
+ [1] map_df_tuple(fun::Function, lst::DataFrames.GroupedDataFrame{DataFrame}, args...; kw...)
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:62</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="melt_list" class="level2">
+<h2 class="anchored" data-anchor-id="melt_list"><code>melt_list</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>melt_list(list; deepcopy=false, kw...)</code></pre>
+<section id="arguments-5" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments-5">Arguments</h3>
+<ul>
+<li><code>list</code>: list of DataFrames</li>
+</ul>
+</section>
+<section id="examples-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples-2">Examples</h3>
+<div class="sourceCode" id="cb37"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> data.<span class="fu">table</span>(; x<span class="op">=</span><span class="fl">1</span>, y<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [d, d, d, d]</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> <span class="fu">melt_list</span>(l, id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>) <span class="co"># id all is 4</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> <span class="fu">melt_list</span>(l, id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, deepcopy<span class="op">=</span><span class="cn">true</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">melt_list</span>(l; a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="model_goal" class="level2">
+<h2 class="anchored" data-anchor-id="model_goal"><code>model_goal</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.model_goal</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "model_goal" from PenmanMonteithLeuning:
+ [1] model_goal(df, theta, parNames; IGBPcode, of_gof, verbose)
+     @ ~/work/PML.jl/PML.jl/src/ModelCalib.jl:54</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="model_gof" class="level2">
+<h2 class="anchored" data-anchor-id="model_gof"><code>model_gof</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.model_gof</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "model_gof" from PenmanMonteithLeuning:
+ [1] model_gof(df_out::DataFrame; all)
+     @ ~/work/PML.jl/PML.jl/src/ModelCalib.jl:80</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="movmean2" class="level2">
+<h2 class="anchored" data-anchor-id="movmean2"><code>movmean2</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.movmean2</code> is a <code>Function</code>.</p>
+<pre><code># 2 methods for generic function "movmean2" from PenmanMonteithLeuning:
+ [1] movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer) where T&lt;:Real
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:10
+ [2] movmean2(y::AbstractVector{T}, win_left::Integer) where T&lt;:Real
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:10</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="nanmean2" class="level2">
+<h2 class="anchored" data-anchor-id="nanmean2"><code>nanmean2</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.nanmean2</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "nanmean2" from PenmanMonteithLeuning:
+ [1] nanmean2(x::T1, y::T2) where {T1&lt;:Real, T2&lt;:Real}
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:30</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="output_pml" class="level2">
+<h2 class="anchored" data-anchor-id="output_pml"><code>output_PML</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<section id="summary-5" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-5">Summary</h3>
+<pre><code>mutable struct output_PML{T}</code></pre>
+</section>
+<section id="fields-4" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields-4">Fields</h3>
+<pre><code>n         :: Integer
+ET        :: Array{T, 1}
+GPP       :: Array{T, 1}
+Ec        :: Array{T, 1}
+Ecr       :: Array{T, 1}
+Eca       :: Array{T, 1}
+Ei        :: Array{T, 1}
+Pi        :: Array{T, 1}
+Es_eq     :: Array{T, 1}
+Eeq       :: Array{T, 1}
+ET_water  :: Array{T, 1}
+Ga        :: Array{T, 1}
+Gc_w      :: Array{T, 1}
+fval_soil :: Array{T, 1}
+Es        :: Array{T, 1}</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="par0" class="level2">
+<h2 class="anchored" data-anchor-id="par0"><code>par0</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.par0</code> is of type <code>Param_PMLV2{Float64}</code>.</p>
+<section id="summary-6" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-6">Summary</h3>
+<pre><code>mutable struct Param_PMLV2{Float64}</code></pre>
+</section>
+<section id="fields-5" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields-5">Fields</h3>
+<pre><code>α        :: Float64
+η        :: Float64
+g1       :: Float64
+VCmax25  :: Float64
+VPDmin   :: Float64
+VPDmax   :: Float64
+D0       :: Float64
+kQ       :: Float64
+kA       :: Float64
+S_sls    :: Float64
+fER0     :: Float64
+hc       :: Float64
+d_pc     :: Float64
+_hc      :: Vector{Float64}
+_η       :: Vector{Float64}
+_α       :: Vector{Float64}
+_g1      :: Vector{Float64}
+_VCmax25 :: Vector{Float64}</code></pre>
+</section>
+<section id="supertype-hierarchy-4" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="supertype-hierarchy-4">Supertype Hierarchy</h3>
+<pre><code>Param_PMLV2{Float64} &lt;: PenmanMonteithLeuning.AbstractETParam{Float64} &lt;: Any</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="photosynthesis" class="level2">
+<h2 class="anchored" data-anchor-id="photosynthesis"><code>photosynthesis</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>photosynthesis(Tavg::T, Rs::T, VPD::T, LAI::T, Ca=380.0; par)</code></pre>
+<section id="example" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="example">Example</h3>
+<div class="sourceCode" id="cb48"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GPP, Gc_w = photosynthesis(Tavg, Rs, VPD, LAI, Ca; par)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="round2" class="level2">
+<h2 class="anchored" data-anchor-id="round2"><code>round2</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.round2</code> is a <code>Function</code>.</p>
+<pre><code># 2 methods for generic function "round2" from PenmanMonteithLeuning:
+ [1] round2(x::NamedTuple, digits; kw...)
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:7
+ [2] round2(x::NamedTuple; ...)
+     @ ~/work/PML.jl/PML.jl/src/utilize.jl:7</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="select_param" class="level2">
+<h2 class="anchored" data-anchor-id="select_param"><code>select_param</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.select_param</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "select_param" from PenmanMonteithLeuning:
+ [1] select_param(par::PenmanMonteithLeuning.AbstractETParam, parNames)
+     @ ~/work/PML.jl/PML.jl/src/Parameter.jl:91</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="theta0" class="level2">
+<h2 class="anchored" data-anchor-id="theta0"><code>theta0</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.theta0</code> is of type <code>Vector{Any}</code>.</p>
+<section id="summary-7" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="summary-7">Summary</h3>
+<pre><code>mutable struct Vector{Any}</code></pre>
+</section>
+<section id="fields-6" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fields-6">Fields</h3>
+<pre><code>ref  :: MemoryRef{Any}
+size :: Tuple{Int64}</code></pre>
+</section>
+<section id="supertype-hierarchy-5" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="supertype-hierarchy-5">Supertype Hierarchy</h3>
+<pre><code>Vector{Any} &lt;: DenseVector{Any} &lt;: AbstractVector{Any} &lt;: Any</code></pre>
+</section>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="theta2par" class="level2">
+<h2 class="anchored" data-anchor-id="theta2par"><code>theta2par</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.theta2par</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "theta2par" from PenmanMonteithLeuning:
+ [1] theta2par(theta::Vector, parNames::Vector{Symbol})
+     @ ~/work/PML.jl/PML.jl/src/Parameter.jl:87</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="theta2param" class="level2">
+<h2 class="anchored" data-anchor-id="theta2param"><code>theta2param</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.theta2param</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "theta2param" from PenmanMonteithLeuning:
+ [1] theta2param(params::Array{Vector{T}, 1}, IGBPs) where T&lt;:Real
+     @ ~/work/PML.jl/PML.jl/src/Parameter.jl:102</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="to_mat" class="level2">
+<h2 class="anchored" data-anchor-id="to_mat"><code>to_mat</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>No documentation found for public symbol.</p>
+<p><code>PenmanMonteithLeuning.to_mat</code> is a <code>Function</code>.</p>
+<pre><code># 1 method for generic function "to_mat" from PenmanMonteithLeuning:
+ [1] to_mat(res::output_PML{T}) where T&lt;:Real
+     @ ~/work/PML.jl/PML.jl/src/DataType.jl:70</code></pre>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -862,8 +1990,8 @@ window.onload = function () {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01-calib_site.html" class="pagination-link" aria-label="Calibration for site">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Calibration for site</span></span>
+      <a href="./index.html" class="pagination-link" aria-label="Reference">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Reference</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -874,4 +2002,4 @@ window.onload = function () {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/jl-pkgs/PML.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jl-pkgs/PML.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
