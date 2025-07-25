@@ -2,7 +2,7 @@ using PenmanMonteithLeuning, Ipaper, Test, RTableTools
 
 include("main_pkgs.jl")
 data = fread("./Forcing_C3C4_sp2.csv")
-replace_miss!(data)
+replace_missing!(data)
 
 df = data[data.site.=="固城", :]
 # df = data[data.site.=="禹城", :]

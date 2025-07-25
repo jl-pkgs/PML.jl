@@ -6,8 +6,9 @@ NamedTuple(names::AbstractVector, values::AbstractVector) =
 
 include("../examples/main_pkgs.jl")
 
-f = "Z:/Researches/ET_ModelDev/data-raw/Forcing_PMLV2_China_8day_2003-2022_flux37_v20250108.csv"
-df = fread(f) |> replace_miss!
+f = "Z:/Researches/ET_ModelDev/data-raw/backup/Forcing_PMLV2_China_8day_2003-2022_flux37_v20250108.csv"
+df = fread(f) |> replace_missing!
+
 sites = df.name |> unique_sort 
 sites = setdiff(sites, ["元江"])
 

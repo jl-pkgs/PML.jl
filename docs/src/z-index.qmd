@@ -16,5 +16,5 @@ using PenmanMonteithLeuning
 ```{julia}
 #| echo: false
 #| output: asis
-DocumenterQuarto.autodoc(PenmanMonteithLeuning)
+# DocumenterQuarto.autodoc(PenmanMonteithLeuning)
 ```

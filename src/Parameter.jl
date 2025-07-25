@@ -111,4 +111,4 @@ end
 export bounds, get_bounds, select_param
 export Param_PMLV2, ParNames
 export theta0, par0, hc_raw
-export param_PML, theta2par, theta2param
+export theta2par, theta2param

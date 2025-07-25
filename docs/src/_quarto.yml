@@ -3,7 +3,7 @@ project:
     output-dir: "../build"
 
 book:
-    title: "SpatRasters"
+    title: "PML"
     author: 
         name: "Dongdong Kong"
         email: "kongdd@users.noreply.github.com"
@@ -30,7 +30,7 @@ book:
 
     twitter-card: true
     open-graph: true
-    repo-url: https://github.com/jl-pkgs/SpatRasters.jl
+    repo-url: https://github.com/jl-pkgs/PML.jl
     repo-actions: [issue]
 
 toc-title: "Table of Contents"

@@ -1,6 +1,6 @@
 using DataFrames
 
-function replace_miss!(df::AbstractDataFrame)
+function replace_missing!(df::AbstractDataFrame)
   # colnames = names(df)
   # num_cols = [name for name in colnames if getDataType(df[!, name]) <: Number]
   for col in names(df)

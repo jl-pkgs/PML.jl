@@ -6,7 +6,7 @@ small = false
 if small
   f = "D:/GitHub/PML/PMLV2_Kong2019.m/data/INPUT_dt_v2019.csv"
   data = fread(f)
-  replace_miss!(data)
+  replace_missing!(data)
   data.GPP_obs = data.GPPobs
   data.ET_obs = data.ETobs
   data.Ca = data.CO2
@@ -18,7 +18,7 @@ if !small
   # f = "data/PMLv2_training_forcing_flux_v20200828 (80%)_102sp.csv"
   f = "data/INPUT_dt_v2019.csv"
   data = fread(f)
-  replace_miss!(data)
+  replace_missing!(data)
   
   data.GPP_obs = data.GPPobs;
   data.ET_obs = data.ETobs;
