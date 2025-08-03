@@ -9,6 +9,8 @@ export DataFrame, GOF
 export fread, fwrite, melt_list
 
 
+
+using ModelParameters
 using Parameters
 using FieldMetadata
 using DataFrames
