@@ -1,4 +1,51 @@
 """
+    Evapotranspiration_PML{FT<:Real} <: AbstractEvapotranspirationModel{FT}
+
+# Fields
+$(TYPEDFIELDS)
+"""
+@bounds @with_kw mutable struct Evapotranspiration_PML{FT<:Real} <: AbstractEvapotranspirationModel{FT}
+  "extinction coefficients for available energy"
+  kA::FT = 0.70 | (0.50, 0.9)
+
+  "Specific leaf storage, van Dijk, A.I.J.M, 2001, Eq2"
+  S_sls::FT = 0.1 | (0.01, 1.0)
+  "Canopy cover fraction related parameter"
+  fER0::FT = 0.1 | (0.01, 0.5)
+  
+  "canopy height, `[m]`"
+  hc::FT = 1.0 | (0.01, 20.0)
+
+  ## 做出三套参数
+  # LAIref::FT = 4.0   | (1.0, 6.0)      # 
+  # frame::Integer = 10.0  | (6.0, 14.0) # 8-day moving window
+end
+
+
+"""
+    cal_Ei_Dijk2021(Prcp::T, LAI::T, par::Param_PMLV2) where {T<:Real}
+
+# References
+1. van Dijk, A.I.J.M, 2001, Eq2.
+"""
+function cal_Ei_Dijk2021(evapotranspiration::Evapotranspiration_PML{T}, Prcp::T, LAI::T; 
+  LAIref::T=T(5.0)) where {T<:Real}
+  (; fER0, S_sls) = evapotranspiration  # two params in Ei
+  
+  # van Dijk, A.I.J.M, 2001, Eq2.
+  fveg = 1 - exp(-LAI / LAIref)  # Canopy cover fraction, Eq.1
+  Sveg = par.S_sls * LAI # Specific leaf storage, Eq.2
+  fER = par.fER0 * fveg # the value of 0.50 based on optimisation at Australian catchments
+  Pwet = -log(1 - par.fER0) / par.fER0 * Sveg / fveg # -log(1 - fER /fveg),
+
+  # Pwet[is.na(Pwet)] = 0; check, negative value, log will give error
+  Ei = Prcp < Pwet ? fveg * Prcp : (fveg * Pwet + fER * (Prcp - Pwet))
+  return Ei
+end
+
+
+
+"""
     PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model
 
 # Arguments

@@ -21,10 +21,14 @@ using DocStringExtensions
 import HydroTools: cal_Uz, Cp, atm, GOF, sceua
 import Ipaper: par_map
 
+
+
 ## global data
 dir_proj = "$(@__DIR__)/.."
 file_FLUXNET_CRO = "$dir_proj/data/CRO/FLUXNET_CRO" |> abspath
 file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
+
+include("Interface.jl")
 
 include("utilize.jl")
 include("Parameter.jl")
@@ -33,6 +37,9 @@ include("ET_helper.jl")
 include("water_constrain.jl")
 include("photosynthesis.jl")
 include("PMLV2.jl")
+
+include("stomatal_conductance.jl")
+
 
 # include("PET_equilibrium.jl")
 # include("Ei_EvapIntercepted.jl")
