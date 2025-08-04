@@ -27,12 +27,12 @@ end
 
 # Example
 ```julia
-# GPP, Gc_w = photosynthesis(Tavg, Rs, VPD, LAI, Ca; par)
+# Ag, Rd = photosynthesis(photo, Tavg, Rs, VPD, LAI, Ca, PC)
 ```
 """
 function photosynthesis(
   photo::Photosynthesis_Rong2018{T},
-  Tavg::T, Rs::T, VPD::T, LAI::T, Ca=380.0, PC=1.0) where {T<:Real}
+  Tavg::T, Rs::T, VPD::T, LAI::T, Ca::T=380.0, PC::T=1.0) where {T<:Real}
   (; α, η, VCmax25, d_pc, kQ) = photo
 
   PAR = 0.45 * Rs # W m-2, taken as 0.45 time of solar radiation
