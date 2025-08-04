@@ -1,4 +1,4 @@
-module PenmanMonteithLeuning
+module SPAC
 
 export PMLV2, PMLV2_sites,
   photosynthesis, cal_Ei_Dijk2021,
@@ -39,4 +39,4 @@ include("utilize.jl")
 # include("Es_EvapSoil.jl")
 # include("model_PMLV2.jl")
 
-end # module PenmanMonteithLeuning
+end # module SPACmodels

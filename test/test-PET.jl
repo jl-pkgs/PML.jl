@@ -1,5 +1,3 @@
-using PenmanMonteithLeuning, Test
-
 @testset "ET0 models" begin
   Rn = 200.0    # W/m²
   Ta = 25.0     # °C

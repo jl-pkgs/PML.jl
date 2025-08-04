@@ -1,10 +1,9 @@
-# Penman-Monteith-Leuning (PML) Evapotranspiration in Julia
+# Penman-Monteith-Leuning (SPAC) Evapotranspiration in Julia
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://jl-pkgs.github.io/PML.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://jl-pkgs.github.io/PML.jl/dev)
-[![CI](https://github.com/jl-pkgs/PML.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/jl-pkgs/PML.jl/actions/workflows/CI.yml)
-[![codecov](https://codecov.io/gh/jl-pkgs/PML.jl/branch/master/graph/badge.svg?token=RmFYanlaQM
-)](https://codecov.io/gh/jl-pkgs/PML.jl/tree/master)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://jl-pkgs.github.io/SPAC.jl/dev)
+[![CI](https://github.com/jl-pkgs/SPAC.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/jl-pkgs/SPAC.jl/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/jl-pkgs/SPAC.jl/branch/master/graph/badge.svg?token=RmFYanlaQM
+)](https://codecov.io/gh/jl-pkgs/SPAC.jl/tree/master)
 
 
 ## TODO
@@ -24,7 +23,7 @@
 
 ### 模型表现
 
-- [ ] 1. 检查`PMLV2`敏感性参数
+- [ ] 1. 检查`SPACV2`敏感性参数
 
 - [ ] 2. 测试LAI除噪的效果
 

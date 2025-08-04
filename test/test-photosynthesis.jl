@@ -1,6 +1,3 @@
-using PenmanMonteithLeuning, Test
-
-
 @testset "photosynthesis" begin
   # Prcp = 2.0 # mm
   # Rn = 50.0

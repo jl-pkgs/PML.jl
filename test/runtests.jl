@@ -1,4 +1,4 @@
-using PenmanMonteithLeuning, Test
+using SPACmodels, Test
 import DataFrames: DataFrame
 
 include("test-Ipaper.jl")
