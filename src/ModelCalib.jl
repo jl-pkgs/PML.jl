@@ -36,10 +36,10 @@ end
 
 ## 一个站点的率定
 """
-    ModelCalib(df::AbstractDataFrame, par0::AbstractETParam; 
+    ModelCalib(df::AbstractDataFrame, par0::AbstractModel; 
         IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
 """
-function ModelCalib(df::AbstractDataFrame, par0::AbstractETParam, parNames;
+function ModelCalib(df::AbstractDataFrame, par0::AbstractModel, parNames;
   IGBPcode=nothing, maxn=2500, of_gof=:NSE, kw...)
   lower, upper = get_bounds(parNames)
   x0 = select_param(par0, parNames)

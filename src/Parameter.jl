@@ -3,32 +3,9 @@ import Ipaper: match2
 
 
 
-abstract type AbstractETParam{FT<:AbstractFloat} end
-
-
-
-"""
-    struct Param_PMLV2{FT<:AbstractFloat} <: AbstractETParam{FT}
-
-# Fields
-$(TYPEDFIELDS)
-"""
-@bounds @with_kw mutable struct Param_PMLV2{FT<:Real} <: AbstractETParam{FT}
-  "extinction coefficients for available energy"
-  kA::FT = 0.70 | (0.50, 0.9)
-
-  "Specific leaf storage, van Dijk, A.I.J.M, 2001, Eq2"
-  S_sls::FT = 0.1 | (0.01, 1.0)
-  "Canopy cover fraction related parameter"
-  fER0::FT = 0.1 | (0.01, 0.5)
-  
-  "canopy height, `[m]`"
-  hc::FT = 1.0 | (0.01, 20.0)
-  
-  ## 做出三套参数
-  # LAIref::FT = 4.0   | (1.0, 6.0)      # 
-  # frame::Integer = 10.0  | (6.0, 14.0) # 8-day moving window
-end
+## 做出三套参数
+# LAIref::FT = 4.0   | (1.0, 6.0)      # 
+# frame::Integer = 10.0  | (6.0, 14.0) # 8-day moving window
 
 ## 做出三套参数
 # _hc::Vector{FT} = [1.0, 1.0, 1.0] | ([0.1, 0.1, 0.1], [20.0, 20.0, 20.0]) #(0.01, 20.0)

@@ -1,19 +1,26 @@
-@with_kw struct Photosynthesis_Rong2018{FT} <: AbstractPhotosynthesisModel{FT}
-  "initial slope of the light response curve to assimilation rate, (i.e., quantum efficiency; `μmol CO2 [μmol PAR]⁻¹`)`"
-  α::FT = 0.06 | (0.01, 0.10)
+export Photosynthesis_Rong2018
+export β_GPP_Zhang2019
 
-  "initial slope of the CO2 response curve to assimilation rate, (i.e., carboxylation efficiency; `μmol m⁻² s⁻¹ [μmol m⁻² s⁻¹]⁻¹`)"
-  η::FT = 0.04 | (0.01, 0.07)
 
-  "carbon saturated rate of photosynthesis at 25 °C, `μmol m⁻² s⁻¹`"
-  VCmax25::FT = 50.00 | (5.00, 120.00)
+@bounds @units @with_kw mutable struct Photosynthesis_Rong2018{FT} <: AbstractPhotosynthesisModel{FT}
+  "initial slope of the light response curve to assimilation rate, (i.e., quantum efficiency)"
+  α::FT = 0.06 | (0.01, 0.10) | "μmol CO2 [μmol PAR]⁻¹"
+
+  "initial slope of the CO2 response curve to assimilation rate, (i.e., carboxylation efficiency)"
+  η::FT = 0.04 | (0.01, 0.07) | "μmol m⁻² s⁻¹ [μmol m⁻² s⁻¹]⁻¹"
+
+  "carbon saturated rate of photosynthesis at 25 °C"
+  VCmax25::FT = 50.00 | (5.00, 120.00) | "μmol m⁻² s⁻¹"
 
   "photoperiod constraint"
-  d_pc::FT = 2.0 | (0.0, 5.0)
+  d_pc::FT = 2.0 | (0.0, 5.0) | "-"
 
   "extinction coefficients for visible radiation" # 植被光合参数
-  kQ::FT = 0.45 | (0.10, 1.0)
+  kQ::FT = 0.45 | (0.10, 1.0) | "-"
+
+  watercons::AbstractWaterConsGPPModel{FT} = β_GPP_Zhang2019{FT}()
 end
+
 
 
 """
@@ -27,7 +34,7 @@ end
 function photosynthesis(
   photo::Photosynthesis_Rong2018{T},
   stomatal::AbstractStomatalModel{T},
-  watercons_GPP::AbstractWaterConsGPPModel{FT},
+  watercons_GPP::AbstractWaterConsGPPModel{T},
   Tavg::T, Rs::T, VPD::T, LAI::T, Pa=atm, Ca=380.0, PC=1.0) where {T<:Real}
 
   (; α, η, VCmax25, d_pc, kQ) = photo

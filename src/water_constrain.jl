@@ -1,10 +1,10 @@
-@with_kw struct β_GPP_Zhang2019{FT} <: AbstractWaterConsGPPModel{FT}
+@bounds @units @with_kw mutable struct β_GPP_Zhang2019{FT} <: AbstractWaterConsGPPModel{FT}
   ## water constraint
-  "parameter to constrain `gc`, kPa"
-  VPDmin::Param = Param(0.9, bounds=(0.65, 1.5))
+  "parameter to constrain `gc`"
+  VPDmin::FT = 0.9 | (0.65, 1.5) | "kPa"
 
-  "parameter to constrain `gc`, kPa"
-  VPDmax::Param = Param(4.0, bounds=(3.50, 6.5))
+  "parameter to constrain `gc`"
+  VPDmax::FT = 4.0 | (3.50, 6.5) | "kPa"
 end
 
 
