@@ -6,7 +6,7 @@ include("test-stomatal_conductance.jl")
 include("test-photosynthesis.jl")
 # include("test-PMLV2.jl")
 
-@testset "ModelParams update!" begin
+@testset "Model Params update!" begin
   FT = Float64
   model = Photosynthesis_Rong2018{FT}()
 
@@ -28,4 +28,4 @@ model = LandModel{FT}(;
   stomatal=Stomatal_Yu2004{FT}(),
   photosynthesis=Photosynthesis_Rong2018{FT}()
 )
-ModelParams(model) |> DataFrame
+Params(model) |> DataFrame

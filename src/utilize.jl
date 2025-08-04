@@ -1,6 +1,6 @@
 # export struct2vec, struct2tuple
 export round2;
-export movmean2, nanmean2, getDataType
+export movmean2, nanmean2
 export map_df_tuple
 
 # rounded_data = NamedTuple((field => round(value) for (field, value) in data))
@@ -39,11 +39,6 @@ function nanmean2(x::T1, y::T2) where {T1<:Real, T2<:Real}
 end
 
 
-function getDataType(x)
-  type = eltype(x)
-  typeof(type) == Union ? type.b : type
-end
-
 # function struct2vec(x)
 #   keys = fieldnames(typeof(x))
 #   vals = [getfield(x, key) for key in keys]
@@ -55,7 +50,6 @@ end
 #   vals = [getfield(x, key) for key in keys]
 #   (; zip(keys, vals)...)
 # end
-
 weighted_mean(x::AbstractVector, w::AbstractVector) = sum(x .* w) / sum(w)
 
 

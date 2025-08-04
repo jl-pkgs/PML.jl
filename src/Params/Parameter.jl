@@ -1,6 +1,4 @@
-import FieldMetadata: @bounds, bounds
 import Ipaper: match2
-
 
 
 ## 做出三套参数
@@ -13,10 +11,6 @@ import Ipaper: match2
 # _α::Vector{FT} = [0.06, 0.06, 0.06] | ([0.01, 0.01, 0.01], [0.10, 0.10, 0.10])
 # _g1::Vector{FT} = [10.0, 10.0, 10.0] | ([2.0, 2.0, 2.0], [100.0, 100.0, 100.0])
 # _VCmax25::Vector{FT} = [50.0, 50.0, 50.0] | ([5.0, 5.0, 5.0], [120.0, 120.0, 120.0])
-
-
-## 划分为两种还是三种
-ParNames = fieldnames(Param_PMLV2) |> collect
 
 function Base.collect(par::AbstractETParam)
   [getfield(par, f) for f in fieldnames(typeof(par))]
