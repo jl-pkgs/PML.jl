@@ -1,3 +1,6 @@
+export β_GPP_Zhang2019
+
+
 @bounds @units @with_kw mutable struct β_GPP_Zhang2019{FT} <: AbstractWaterConsGPPModel{FT}
   ## water constraint
   "parameter to constrain `gc`"

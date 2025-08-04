@@ -3,15 +3,14 @@ import DataFrames: DataFrame
 
 include("test-Ipaper.jl")
 include("test-stomatal_conductance.jl")
-
+include("test-photosynthesis.jl")
 # include("test-PMLV2.jl")
-# include("test-photosynthesis.jl")
 
 @testset "ModelParams update!" begin
   FT = Float64
   model = Photosynthesis_Rong2018{FT}()
 
-  params = ModelParams(model)
+  params = Params(model)
   params |> DataFrame
 
   parnames = [:kQ, :VCmax25, :VPDmin]

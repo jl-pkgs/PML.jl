@@ -1,5 +1,4 @@
 export Photosynthesis_Rong2018
-export β_GPP_Zhang2019
 
 
 @bounds @units @with_kw mutable struct Photosynthesis_Rong2018{FT} <: AbstractPhotosynthesisModel{FT}
@@ -33,18 +32,17 @@ end
 """
 function photosynthesis(
   photo::Photosynthesis_Rong2018{T},
-  stomatal::AbstractStomatalModel{T},
-  watercons_GPP::AbstractWaterConsGPPModel{T},
-  Tavg::T, Rs::T, VPD::T, LAI::T, Pa=atm, Ca=380.0, PC=1.0) where {T<:Real}
-
+  Tavg::T, Rs::T, VPD::T, LAI::T, Ca=380.0, PC=1.0) where {T<:Real}
   (; α, η, VCmax25, d_pc, kQ) = photo
-
+  
   PAR = 0.45 * Rs # W m-2, taken as 0.45 time of solar radiation
   PAR_mol = PAR * 4.57 # 1 W m-2 = 4.57 umol m-2 s-1
 
   Vm = VCmax25 * T_adjust_Vm25(Tavg) * PC^d_pc # * data$dhour_norm^2 
   Am = Vm # 认为最大光合速率 = 最大羧化能力
 
+  @show Vm
+  
   P1 = Am * α * η * PAR_mol
   P2 = Am * α * PAR_mol
   P3 = Am * η * Ca
@@ -53,14 +51,10 @@ function photosynthesis(
   ## canopy conductance in (mol m-2 s-1)
   Ags = Ca * P1 / (P2 * kQ + P4 * kQ) * (
     kQ * LAI + log((P2 + P3 + P4) / (P2 + P3 * exp(kQ * LAI) + P4))) # [umol m-2 s-1]
-  Ag = Ags * β_GPP(VPD, watercons_GPP) # gross assimilation rate in [umol m-2 s-1]
-  GPP = Ag * 86400 / 10^6 * 12 # [umol m-2 s-1] to [g C m-2 d-1]
+  Ag = Ags * β_GPP(VPD, photo.watercons) # gross assimilation rate in [umol m-2 s-1]
 
-  Gc_w = stomatal_conductance(stomatal, Ag, Rd, VPD, Ca)
-  Gc_w = max(Gc_w, 1e-6) # 限最小值
-  # f_VPD_gc = 1.0 / (1.0 + VPD / D0) # Leuning f_vpd
-  # Gc = g1 * Ag / Ca * f_VPD_gc # canopy conductance for carbon, [umol m-2 s-1] / [umol mol-1] = [mol m-2 s-1]
-  GPP, Gc_w
+  Rd = 0.15Vm # Collatz et al. (1991); CLM5 Tech Note
+  Ag, Rd # [umol m-2 s-1]
 end
 
 ## Convert from [mol m-2 s-1] to m s-1

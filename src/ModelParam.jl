@@ -1,4 +1,4 @@
-export ModelParams, AbstractModel, update!
+export Params, AbstractModel, update!
 
 
 import FieldMetadata: @bounds, bounds, @units, units
@@ -28,15 +28,15 @@ function get_ModelParamRecursive(x::T, path=Vector{Symbol}(); fun=bounds) where 
 end
 
 
-function ModelParams(model::AbstractModel)
+function Params(model::AbstractModel)
   _names = get_ModelParamRecursive(model; fun=_fieldname)
   _bounds = get_ModelParamRecursive(model; fun=bounds)
   _values = get_ModelParamRecursive(model; fun=getfield)
   _units = get_ModelParamRecursive(model; fun=units)
 
   # 返回NamedTuple向量，符合Tables接口
-  [(path=first(n), name=last(n), value=last(v),
-    unit=last(u), bound=last(b))
+  [(name=last(n), value=last(v), bound=last(b),
+    unit=last(u), path=first(n))
    for (n, v, u, b) in zip(_names, _values, _units, _bounds)]
 end
 
