@@ -13,31 +13,24 @@ G_s = gs_sunlit * LAI_sunlit + gs_shaded * L_shaded
 T = T(G_s)
 """
 @with_kw mutable struct BigLeaf{FT} <: AbstractLeaf{FT}
-  Lai::FT = 0.0   # leaf area index
-  gs::FT = 0.0    # stomatal conductance for h2o
-
-  Rs_c::FT = 0.0
-  Rs_s::FT = 0.0
-
+  Lai::FT = 0.0 | "-"    # leaf area index
+  gs::FT = 0.0  | "m s-1"    # stomatal conductance for h2o
+  # Rs_c::FT = 0.0
+  # Rs_s::FT = 0.0
   Rn_c::FT = 0.0
   Rn_s::FT = 0.0
-
-  H_s::FT = 0.0   # _s: soil
-  LE_s::FT = 0.0
-
-  H_c::FT = 0.0   # _c: canopy
-  LE_c::FT = 0.0
-
-  GPP::FT = 0.0
+  # H_s::FT = 0.0   # _s: soil
+  # LE_s::FT = 0.0
+  # H_c::FT = 0.0   # _c: canopy
+  T::FT = 0.0 | "mm d-1"  # Transpiration
+  GPP::FT = 0.0 | "gC m-2 d-1"
 end
 
-function radiation_partition(leaf::BigLeaf, kA, Rn)
+function radiative_transfer!(leaf::BigLeaf{T}, Rn::T; kA::T=T(0.7)) where {T}
   (; Lai) = leaf
   τ = exp(-kA * Lai) # 辐射冠层截留的比例
-  
-  Rns = (1 - τ) * Rn
-  Rnc = τ * Rn
-  
+  leaf.Rn_c = (1 - τ) * Rn
+  leaf.Rn_s = τ * Rn
 end
 
 

@@ -34,7 +34,7 @@ end
 """
 function evapotranspiration(
   air::AirLayer{T},
-  canopy::CanopyLayer{T},
+  canopy::BigLeaf{T},
   evap::AbstractEvapotranspirationModel{T},
   photo::AbstractPhotosynthesisModel{T},
   stomatal::AbstractStomatalModel{T}) where {T<:Real}
@@ -57,19 +57,18 @@ function evapotranspiration(
 
   Ei = cal_Ei_Dijk2021(Prcp, LAI, fER0, S_sls)
   Pi = Prcp - Ei # 应扣除这一部分消耗的能量
-
+  
   Rn = Rn - MJ2W(λ * Pi)
 
-  τ = exp(-kA * LAI)
-  Rns = (1 - τ) * Rn
-  Rnc = τ * Rn
+  radiative_transfer!(canopy, Rn; kA)
+  (; Rn_c, Rn_s) = canopy
 
   GPP, rs = leaf_conductance(air, canopy, photo, stomatal) # coupling GPP model
-  Ec, Ecr, Eca, ra = ET0_Monteith65(Rnc, Tair, VPD, U2, Pa;
+  Ec, Ecr, Eca, ra = ET0_Monteith65(Rn_c, Tair, VPD, U2, Pa;
     rs, hc, z_wind=2.0)
 
   ## TODO: 补充冰面蒸发的计算
-  Es_eq = Δ / (Δ + γ) * Rns |> x -> W2mm(x, λ) # 土壤均衡蒸发
+  Es_eq = Δ / (Δ + γ) * Rn_s |> x -> W2mm(x, λ) # 土壤均衡蒸发
   # r.Es_eq = r.Eeq * exp(-0.9 * LAI) # Ka = 0.9, insensitive param
   (GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, ET_water, rs, ra)
 end
