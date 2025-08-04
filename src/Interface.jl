@@ -1,3 +1,7 @@
+export LandModel
+export AbstractWaterConsGPPModel, AbstractStomatalModel, AbstractPhotosynthesisModel, AbstractEvapotranspirationModel
+
+
 using Parameters
 import FieldMetadata: @bounds, bounds, @units, units
 
@@ -20,6 +24,6 @@ abstract type AbstractEvapotranspirationModel{FT} <: AbstractModel{FT} end
   # atmospheric_forcing::AtmosphericForcing
   stomatal::AbstractStomatalModel{FT}
   photosynthesis::AbstractPhotosynthesisModel{FT}
-  evapotranspiration::AbstractEvapotranspirationModel{FT}
-  watercons_GPP::AbstractWaterConsGPPModel{FT}
+  # evapotranspiration::AbstractEvapotranspirationModel{FT}
+  # watercons_GPP::AbstractWaterConsGPPModel{FT}
 end

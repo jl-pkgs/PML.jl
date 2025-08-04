@@ -22,3 +22,11 @@ include("test-stomatal_conductance.jl")
   @test model.VCmax25 == 10.
   @test model.watercons.VPDmin == 0.8
 end
+
+
+FT = Float64
+model = LandModel{FT}(;
+  stomatal=Stomatal_Yu2004{FT}(),
+  photosynthesis=Photosynthesis_Rong2018{FT}()
+)
+ModelParams(model) |> DataFrame
