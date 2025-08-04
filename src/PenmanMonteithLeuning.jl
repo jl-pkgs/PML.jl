@@ -25,15 +25,15 @@ dir_proj = "$(@__DIR__)/.."
 file_FLUXNET_CRO = "$dir_proj/data/CRO/FLUXNET_CRO" |> abspath
 file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
 
-include("Params/ModelParam.jl")
-# include("modules/Interface.jl")
-# include("Parameter.jl")
+include("ModelParam.jl")
 
 include("modules/modules.jl")
 
 include("utilize.jl")
-include("ModelCalib.jl")
-include("PMLV2.jl")
+
+# include("ModelCalib.jl")
+# include("PMLV2.jl")
+
 # include("Ei_EvapIntercepted.jl")
 # include("Ec_CanopyTrans.jl")
 # include("Es_EvapSoil.jl")

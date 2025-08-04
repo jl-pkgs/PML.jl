@@ -1,5 +1,5 @@
 using PenmanMonteithLeuning, Test
-# import HydroTools: atm
+
 
 @testset "photosynthesis" begin
   # Prcp = 2.0 # mm
@@ -9,7 +9,7 @@ using PenmanMonteithLeuning, Test
   Rs = 200.0
   VPD = 2.0
   LAI = 2.0
-  Ca = 380 # ppm
+  Ca = 380. # ppm
 
   FT = Float64
   photo = Photosynthesis_Rong2018{FT}()
