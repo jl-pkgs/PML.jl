@@ -89,7 +89,7 @@ function ET0_Monteith65(Rn::T, Tair::T, VPD::T, Uz::T, Pa::T=atm;
   Eeq = Δ / (Δ + (γ * (1 + rs / ra))) * Rn |> x -> W2mm(x, λ)
   Evp = (ρₐ * Cp * VPD / ra) / (Δ + (γ * (1 + rs / ra))) * 86400 / λ
   Ec = Eeq + Evp
-  (; Ec, Eeq, Eca, ra)
+  (; Ec, Eeq, Evp, ra)
 end
 
 

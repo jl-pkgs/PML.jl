@@ -4,7 +4,9 @@ import DataFrames: DataFrame
 include("test-Ipaper.jl")
 include("test-stomatal_conductance.jl")
 include("test-photosynthesis.jl")
+include("test-PET.jl")
 # include("test-PMLV2.jl")
+
 
 @testset "Model Params update!" begin
   FT = Float64

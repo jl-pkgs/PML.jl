@@ -1,7 +1,6 @@
 using PenmanMonteithLeuning, Test
 
-# @testset "ET0 models" 
-begin
+@testset "ET0 models" begin
   Rn = 200.0    # W/m²
   Ta = 25.0     # °C
   VPD = 1.5     # kPa
@@ -14,8 +13,8 @@ begin
   @test ra_2 ≈ 207.66407000788683
 
   @test ET0_PT72(Rn, Ta) ≈ 6.564860193238437
-  @test ET0_Penman48(Rn, Ta, VPD, Uz) ≈ 7.9265544809634365
-  @test ET0_FAO98(Rn, Ta, VPD, Uz) ≈ 6.928646397419433
+  @test ET0_Penman48(Rn, Ta, VPD, Uz)[1] ≈ 7.9265544809634365
+  @test ET0_FAO98(Rn, Ta, VPD, Uz)[1] ≈ 6.928646397419433
 
   @test ET0_Monteith65(250.0, 25.0, 1.0, 2.0; hc=0.12)[1] ≈ 6.871881995698257
 end
