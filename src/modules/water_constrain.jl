@@ -22,14 +22,3 @@ function β_GPP(VPD::T, par::β_GPP_Zhang2019{T}) where {T<:Real}
     (VPDmax - VPD) / (VPDmax - VPDmin)
   end
 end
-
-
-function f_VPD_Zhang2019(VPD::T, VPDmin::T, VPDmax::T)::T where {T<:Real}
-  if (VPD > VPDmax)
-    T(0.0)
-  elseif VPD < VPDmin
-    T(1.0)
-  else
-    (VPDmax - VPD) / (VPDmax - VPDmin)
-  end
-end

@@ -48,25 +48,18 @@ end
 3. Kong Dongdong, 2019, ISPRS
 """
 function evapotranspiration(
+  evap::AbstractEvapotranspirationModel{T},
+  photo::AbstractPhotosynthesisModel,
+  stomatal::AbstractStomatalModel,
   Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
   Pa=atm, Ca=380.0, PC=1.0,
   Ω::T=T(1.0);
-  # leaf::AbstractLeaf, 
-  # par::LandModel,
   r::Union{Nothing,interm_PML}=nothing) where {T<:Real}
 
   (; fER0, S_sls) = evap
 
   isnothing(r) && (r = interm_PML{T}())
-
-  ### CARBON MODULE: PHOTOSYNTHESIS --------------------------------------------
-  Ag, Rd = photosynthesis(Tavg, Rs, VPD, LAI, Pa, Ca, PC; par)
-  GPP = umol2gC(Ag)
-
-  gs = stomatal_conductance(stomatal, Ag, Rd, VPD, Ca) # [mol m-2 s-1], 0.1~0.4
-  rs = 1 / mol2m(gs, Tavg, Pa)
-
-  ### WATER MODULE: ------------------------------------------------------------
+  
   ## Intercepted Evaporation (Ei)
   λ::T = cal_lambda(Tair) # [MJ kg-1]
   γ::T = cal_gamma(Tair)
@@ -81,6 +74,7 @@ function evapotranspiration(
   Rns = (1 - τ) * Rn
   Rnc = τ * Rn
 
+  rs = leaf_conductance(model, met) # coupling GPP model
   Ec, Ecr, Eca, ra = ET0_Monteith65(Rnc, Tair, VPD, U2, Pa;
     rs, hc, z_wind=2.0)
 
@@ -96,3 +90,16 @@ function evapotranspiration(
   (GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, ET_water, rs, ra)
 end
 
+
+function leaf_conductance(
+  photo::AbstractPhotosynthesisModel,
+  stomatal::AbstractStomatalModel,
+  Tavg, Rs, VPD, LAI, Pa, Ca, PC;)
+
+  Ag, Rd = photosynthesis(photo, Tavg, Rs, VPD, LAI, Pa, Ca, PC;)
+  GPP = umol2gC(Ag)
+
+  gs = stomatal_conductance(stomatal, Ag, Rd, VPD, Ca) # [mol m-2 s-1], 0.1~0.4
+  rs = 1 / mol2m(gs, Tavg, Pa)
+  rs
+end

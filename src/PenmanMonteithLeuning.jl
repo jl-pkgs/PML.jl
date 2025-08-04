@@ -9,10 +9,7 @@ export DataFrame, GOF
 export fread, fwrite, melt_list
 
 
-
-using Parameters
-using FieldMetadata
-
+using Parameters, FieldMetadata
 using DataFrames
 using Statistics
 using RTableTools
@@ -29,20 +26,14 @@ file_FLUXNET_CRO = "$dir_proj/data/CRO/FLUXNET_CRO" |> abspath
 file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
 
 include("Params/ModelParam.jl")
-include("Params/Interface.jl")
+# include("modules/Interface.jl")
 # include("Parameter.jl")
+
+include("modules/modules.jl")
 
 include("utilize.jl")
 include("ModelCalib.jl")
-# include("water_constrain.jl")
-include("modules/modules.jl")
-
-# include("photosynthesis.jl")
-# include("stomatal_conductance.jl")
 include("PMLV2.jl")
-
-
-# include("PET_equilibrium.jl")
 # include("Ei_EvapIntercepted.jl")
 # include("Ec_CanopyTrans.jl")
 # include("Es_EvapSoil.jl")
