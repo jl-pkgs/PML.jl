@@ -9,7 +9,6 @@ end
 
 
 const R_gas = 8.3144621 # J/(mol K)
-const K0 = 273.15
 
 """
     mol2m(x, Tavg, Pa=atm)

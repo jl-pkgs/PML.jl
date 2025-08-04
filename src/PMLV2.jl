@@ -1,127 +1,4 @@
 """
-    Evapotranspiration_PML{FT<:Real} <: AbstractEvapotranspirationModel{FT}
-
-# Fields
-$(TYPEDFIELDS)
-"""
-@bounds @with_kw mutable struct Evapotranspiration_PML{FT<:Real} <: AbstractEvapotranspirationModel{FT}
-  "extinction coefficients for available energy"
-  kA::FT = 0.70 | (0.50, 0.9)
-
-  "Specific leaf storage, van Dijk, A.I.J.M, 2001, Eq2"
-  S_sls::FT = 0.1 | (0.01, 1.0)
-  "Canopy cover fraction related parameter"
-  fER0::FT = 0.1 | (0.01, 0.5)
-  
-  "canopy height, `[m]`"
-  hc::FT = 1.0 | (0.01, 20.0)
-
-  ## 做出三套参数
-  # LAIref::FT = 4.0   | (1.0, 6.0)      # 
-  # frame::Integer = 10.0  | (6.0, 14.0) # 8-day moving window
-end
-
-
-"""
-    cal_Ei_Dijk2021(Prcp::T, LAI::T, par::Param_PMLV2) where {T<:Real}
-
-# References
-1. van Dijk, A.I.J.M, 2001, Eq2.
-"""
-function cal_Ei_Dijk2021(evapotranspiration::Evapotranspiration_PML{T}, Prcp::T, LAI::T; 
-  LAIref::T=T(5.0)) where {T<:Real}
-  (; fER0, S_sls) = evapotranspiration  # two params in Ei
-  
-  # van Dijk, A.I.J.M, 2001, Eq2.
-  fveg = 1 - exp(-LAI / LAIref)  # Canopy cover fraction, Eq.1
-  Sveg = par.S_sls * LAI # Specific leaf storage, Eq.2
-  fER = par.fER0 * fveg # the value of 0.50 based on optimisation at Australian catchments
-  Pwet = -log(1 - par.fER0) / par.fER0 * Sveg / fveg # -log(1 - fER /fveg),
-
-  # Pwet[is.na(Pwet)] = 0; check, negative value, log will give error
-  Ei = Prcp < Pwet ? fveg * Prcp : (fveg * Pwet + fER * (Prcp - Pwet))
-  return Ei
-end
-
-
-
-"""
-    PMLV2 (Penman–Monteith–Leuning Version 2) Evapotranspiration model
-
-# Arguments
-
-- `Prcp` : mm/d
-- `Tavg` : degC
-- `Rs`   : W m-2
-- `Rn`   : W m-2
-- `VPD`  : W m-2
-- `U2`   : m/s
-- `LAI`  : m2 m-2
-- `Pa`   : kPa
-- `Ca`   : ppm, default `380`
-- `Ω`    : clamping index, default is `1.0`
-
-# Examples
-```julia
-```
-
-# References
-1. Gan Rong, 2018, Ecohydrology
-2. Zhang Yongqiang, 2019, RSE
-3. Kong Dongdong, 2019, ISPRS
-"""
-function PMLV2(Prcp::T, Tavg::T, Rs::T, Rn::T, VPD::T, U2::T, LAI::T,
-  Pa=atm, 
-  Ca=380.0, PC=1.0,
-  Ω::T=T(1.0);
-  # leaf::AbstractLeaf, 
-  # par::LandModel,
-  r::Union{Nothing,interm_PML}=nothing) where {T<:Real}
-  r === nothing && (r = interm_PML{T}())
-
-  # D0 = 0.7
-  # kQ = 0.6 # extinction coefficients for visible radiation
-  # kA = 0.7 # extinction coefficient for available energy
-  λ, Δ, γ, r.Eeq = ET0_eq(Rn, Tavg, Pa)
-  ϵ = Δ / γ
-
-  ### CARBON MODULE: PHOTOSYNTHESIS --------------------------------------------
-  r.GPP, r.Gc_w = photosynthesis(Tavg, Rs, VPD, LAI, Pa, Ca, PC; par)
-
-  ### WATER MODULE: ------------------------------------------------------------
-  ## Intercepted Evaporation (Ei)
-  r.Ei = cal_Ei_Dijk2021(Prcp, LAI, par)
-  r.Pi = Prcp - r.Ei # 应扣除这一部分消耗的能量
-
-  r.Ga = aerodynamic_conductance(U2, par.hc) # Leuning, 2008, Eq.13, doi:10.1029/2007WR006562
-
-  # Transpiration from plant cause by radiation water transfer
-  Tou = exp(-par.kA * LAI)
-  LEcr = ϵ * Rn * (1 - Tou) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2
-
-  # Transpiration from plant cause by aerodynamic water transfer
-  ρa = cal_rho_a(Tavg, Pa)
-  # ρa = cal_rho_a(Tavg, q, Pa)
-  LEca = (ρa * Cp * 1e6 * r.Ga * VPD / γ) / (ϵ + 1 + r.Ga / r.Gc_w) # W m-2, `Cp*1e6`: [J kg-1 °C-1]
-  # [kg m-3] [J kg-1 K-1] [m s-1] [kPa] / [kPa K-1] = [W m-2]
-
-  r.Ecr = W2mm(LEcr; λ) # [W m-2] change to [mm d-1]
-  r.Eca = W2mm(LEca; λ) # [W m-2] change to [mm d-1]
-  r.Ec = r.Ecr + r.Eca
-
-  ## TODO: 补充冰面蒸发的计算
-  Evp::T = γ / (Δ + γ) * 6.43 * (1 + 0.536 * U2) * VPD / λ
-  r.ET_water = r.Eeq + Evp
-
-  r.Es_eq = r.Eeq * Tou # Soil evaporation at equilibrium, mm d-1
-  # r.Es_eq = r.Eeq * exp(-0.9 * LAI) # Ka = 0.9, insensitive param
-  r
-  # GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, Eeq, ET_water, Ga, Gc_w
-end
-
-
-
-"""
     PMLV2(Prcp, Tavg, Rs, Rn, VPD, U2, LAI, Pa, Ca; par=param0, frame=3)
 
 # Notes
@@ -134,7 +11,7 @@ function PMLV2(Prcp::V, Tavg::V, Rs::V, Rn::V,
   VPD::V, U2::V, LAI::V,
   Pa::V,
   Ca::V,
-  PC::Union{T,V} = T(1.0);
+  PC::Union{T,V}=T(1.0);
   # par::LandModel, 
   frame=3,
   res::Union{Nothing,output_PML}=nothing) where {T<:Real,V<:AbstractVector{T}}
@@ -170,14 +47,15 @@ end
   + `r`: `interm_PML`
 """
 function PMLV2(d::AbstractDataFrame; par::LandModel, kw...)
-  
+
   (; Prcp, Tavg, Rs, Rn, VPD, U2, LAI, Pa, Ca) = d
   PC = "PC" ∈ names(d) ? d.PC : 1.0
-  
+
   PMLV2(Prcp, Tavg, Rs, Rn,
     VPD, U2, LAI,
     Pa, Ca, PC; par, kw...) |> to_df
 end
+
 
 # 相同植被类型多个站点一起的计算
 function PMLV2_sites(df::AbstractDataFrame; par::LandModel, kw...)

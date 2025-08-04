@@ -18,7 +18,8 @@ using Statistics
 using RTableTools
 using DocStringExtensions
 
-import HydroTools: cal_Uz, Cp, atm, GOF, sceua
+
+# import HydroTools: GOF, sceua
 import Ipaper: par_map
 
 
