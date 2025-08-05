@@ -20,6 +20,6 @@ end
 
 
 function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=0) where {T<:Real}
-  z = zeros(Float64, y)
+  z = zeros(Float64, length(y))
   movmean2!(z, y, win_left, win_right)
 end

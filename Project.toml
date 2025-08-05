@@ -23,5 +23,13 @@ Ipaper = "0.3"
 Parameters = "0.12"
 Printf = "1.11.0"
 RTableTools = "0.1.4"
+Serialization = "1.11.0"
 UnPack = "1.0.2"
 julia = "1.10, 1.11"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+
+[targets]
+test = ["Test", "Serialization"]

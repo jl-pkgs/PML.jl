@@ -43,7 +43,7 @@ end
 @with_kw mutable struct SpacOutputs{FT}
   ## Original Output
   ntime::Int = 10
-  
+
   ET::Vector{FT} = zeros(ntime)
   GPP::Vector{FT} = zeros(ntime)
   Ec::Vector{FT} = zeros(ntime)
@@ -60,6 +60,7 @@ end
   rs::Vector{FT} = zeros(ntime) # for water
 
   β_Es::Vector{FT} = zeros(ntime)  # 土壤水限制因子, sum(Pi)/sum(Es_eq)
+  β_GPP::Vector{FT} = zeros(ntime) # 限制因子, sum(Pi)/sum(Es_eq)
   Es::Vector{FT} = zeros(ntime)
 end
 
@@ -71,3 +72,22 @@ function Base.setindex!(res::SpacOutputs, r::SpacOutput, i::Int64)
   end
   return res
 end
+
+
+## DATATYPE CONVERSION ---------------------------------------------------------
+import DataFrames: DataFrame
+
+function to_mat(res::SpacOutputs{T}) where {T<:Real}
+  TYPE = typeof(res)
+  names = fieldnames(TYPE)[2:end] |> collect
+  data = map(i -> getfield(res, i), names)
+  data = cat(data..., dims=2)
+  data, names
+end
+
+function DataFrame(res::SpacOutputs{T}) where {T<:Real}
+  data, names = to_mat(res)
+  DataFrame(data, names)
+end
+
+export to_mat, DataFrame;

@@ -30,19 +30,13 @@ include("SpacOutput.jl")
 
 include("modules/modules.jl")
 include("evapotranspiration.jl")
+include("ET_PMLV2.jl")
 
 include("tridiagonal_solver.jl")
 include("Radiation/Norman_Longwave.jl")
 include("Radiation/Norman_Shortwave.jl")
 
 include("tools_Ipaper.jl")
-
 # include("ModelCalib.jl")
-# include("PMLV2.jl")
-
-# include("Ei_EvapIntercepted.jl")
-# include("Ec_CanopyTrans.jl")
-# include("Es_EvapSoil.jl")
-# include("model_PMLV2.jl")
 
 end # module SPACmodels

@@ -12,18 +12,6 @@ import Ipaper: match2
 # _g1::Vector{FT} = [10.0, 10.0, 10.0] | ([2.0, 2.0, 2.0], [100.0, 100.0, 100.0])
 # _VCmax25::Vector{FT} = [50.0, 50.0, 50.0] | ([5.0, 5.0, 5.0], [120.0, 120.0, 120.0])
 
-function Base.collect(par::AbstractETParam)
-  [getfield(par, f) for f in fieldnames(typeof(par))]
-end
-
-function get_bounds(parNames::Vector{Symbol}=ParNames)
-  inds = match2(parNames, ParNames).I_y # 选择的参数
-  bs = bounds(Param_PMLV2)[inds]
-  lower = vcat(map(x -> x[1], bs)...)
-  upper = vcat(map(x -> x[2], bs)...)
-  lower, upper
-end
-
 
 # theta2par(theta) = Param_PMLV2(theta...)
 function theta2par!(theta::Vector, par::AbstractETParam, parNames::Vector{Symbol})

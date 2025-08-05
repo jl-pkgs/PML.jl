@@ -1,7 +1,7 @@
 using SPAC, Test
+using Serialization
 
-
-@testset "evapotranspiration" begin
+@testset "evapotranspiration One moment" begin
   FT = Float64
 
   air = AirLayer{FT}()
@@ -12,12 +12,27 @@ using SPAC, Test
   stomatal = Stomatal_Yu2004{FT}()
   stomatal = Stomatal_Medlyn2011{FT}()
 
-  r_bare = evapotranspiration(air, canopy_bare, evap, photo, stomatal)
-  r_veg = evapotranspiration(air, canopy_veg, evap, photo, stomatal)
+  r_bare = evapotranspiration(evap, photo, stomatal, air, canopy_bare)
+  r_veg = evapotranspiration(evap, photo, stomatal, air, canopy_veg)
 
   r_bare.ET_water == r_veg.ET_water
   @test r_bare[[:GPP, :Ec, :Ecr, :Eca, :Ei, :Pi]] == zeros(6)
 
   model = LandModel{FT}(; evap, photo, stomatal)
   Params(model) |> DataFrame
+end
+
+
+## 测试单站点的运行与模拟
+@testset "evapotranspiration One Site" begin
+  FT = Float64
+  air = AirLayer{FT}()
+  canopy_bare = BigLeaf{FT}(; Lai=0.0)
+  canopy_veg = BigLeaf{FT}(; Lai=2.0)
+  evap = Evapotranspiration_PML{FT}()
+  photo = Photosynthesis_Rong2018{FT}()
+  stomatal = Stomatal_Yu2004{FT}()
+
+  df_out, df, _par = deserialize(file_FLUXNET_CRO_USTwt)
+  @test_nowarn res = evapotranspiration(evap, photo, stomatal, df) |> DataFrame
 end
