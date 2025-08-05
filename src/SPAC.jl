@@ -5,7 +5,7 @@ export PMLV2, PMLV2_sites,
   T_adjust_Vm25, f_VPD_Zhang2019
 
 export file_FLUXNET_CRO, file_FLUXNET_CRO_USTwt
-export DataFrame, GOF
+export DataFrame, GOF, sceua
 export fread, fwrite, melt_list
 
 
@@ -16,7 +16,7 @@ using DataFrames, RTableTools
 using DocStringExtensions
 
 
-# import HydroTools: GOF, sceua
+import ModelParams: GOF, sceua
 import Ipaper: par_map
 
 
