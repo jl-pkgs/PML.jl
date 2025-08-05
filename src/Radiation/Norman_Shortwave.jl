@@ -1,3 +1,5 @@
+export Norman_Shortwave
+
 function Norman_Shortwave(
   dLAI,
   PARdir=1000, PARdif=200,

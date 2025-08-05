@@ -9,11 +9,10 @@ export DataFrame, GOF
 export fread, fwrite, melt_list
 
 
-using UnPack
+using UnPack, Printf
 using Parameters, FieldMetadata
-using DataFrames
 using Statistics
-using RTableTools
+using DataFrames, RTableTools
 using DocStringExtensions
 
 
@@ -29,6 +28,11 @@ file_FLUXNET_CRO_USTwt = "$dir_proj/data/CRO/FLUXNET_CRO_US-Twt" |> abspath
 include("ModelParam.jl")
 
 include("modules/modules.jl")
+
+include("tridiagonal_solver.jl")
+include("Radiation/Norman_Longwave.jl")
+include("Radiation/Norman_Shortwave.jl")
+
 # include("utilize.jl")
 
 # include("ModelCalib.jl")

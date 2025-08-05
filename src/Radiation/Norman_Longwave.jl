@@ -1,5 +1,23 @@
 export Norman_Longwave;
 
+
+
+"""
+blackbody radiation
+
+# Arguments
+- `Ta`: air temperature, in degC
+- `ϵ`: emissivity, default is 1
+
+# Return
+- longwave radiation, in `W m-2`
+"""
+function blackbody(ϵ::T, Ta::T) where {T<:Real}
+  σ = 5.67e-8
+  ϵ * σ * (Ta + K0)^4
+end
+
+
 """
     Norman_Longwave(ϵ=0.98, ϵ_g=1.0, T_veg=25, T_g=20, L_sky=400)
 
