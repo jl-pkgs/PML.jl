@@ -1,4 +1,4 @@
-using SPACmodels, Test
+using SPAC, Test
 import DataFrames: DataFrame
 
 include("test-Ipaper.jl")
