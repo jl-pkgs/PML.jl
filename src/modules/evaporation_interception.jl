@@ -6,6 +6,7 @@
 """
 function cal_Ei_Dijk2021(Prcp::T, LAI::T, fER0::T, S_sls::T;
   LAIref::T=T(5.0)) where {T<:Real}
+  LAI <= 0.01 && return T(0) # 无冠层无截留
 
   # van Dijk, A.I.J.M, 2001, Eq2.
   fveg = 1 - exp(-LAI / LAIref)  # Canopy cover fraction, Eq.1

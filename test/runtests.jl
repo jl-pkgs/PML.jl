@@ -7,7 +7,7 @@ include("test-photosynthesis.jl")
 include("test-PET.jl")
 
 include("test-radiation.jl")
-# include("test-PMLV2.jl")
+include("test-evapotranspiration.jl")
 
 
 @testset "Model Params update!" begin

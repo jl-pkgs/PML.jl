@@ -1,5 +1,6 @@
 export LandModel, OverUnderCanopy
 export AbstractWaterConsGPPModel, AbstractStomatalModel, AbstractPhotosynthesisModel, AbstractEvapotranspirationModel
+export AirLayer, update!
 
 
 using Parameters
@@ -50,11 +51,6 @@ function update!(air::AirLayer{FT}; Tavg::FT, Pa::FT, kw...) where {FT<:Real}
   @pack! air = Tavg, Pa, λ, γ, Δ, β, ρₐ, kw...
 end
 
-
-@units @with_kw mutable struct CanopyLayer{FT<:Real}
-  LAI::FT = 2.0 | "m² m⁻²" # leaf area index
-  Ω::FT = 1.0 | ""  # clamping index, default is `1.0`
-end
 
 
 
