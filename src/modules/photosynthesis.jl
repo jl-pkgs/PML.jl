@@ -12,14 +12,15 @@ export Photosynthesis_Rong2018
   VCmax25::FT = 50.00 | (5.00, 120.00) | "μmol m⁻² s⁻¹"
 
   "photoperiod constraint"
-  d_pc::FT = 2.0 | (0.0, 5.0) | "-"
+  d_PC::FT = 2.0 | (0.0, 5.0) | "-"
 
   "extinction coefficients for visible radiation" # 植被光合参数
   kQ::FT = 0.45 | (0.10, 1.0) | "-"
 
   watercons::AbstractWaterConsGPPModel{FT} = β_GPP_Zhang2019{FT}()
-end
 
+  use_PC::Bool = false | (NaN, NaN) | "-" # 是否开启光周期, 不参与参数优化
+end
 
 
 """
@@ -33,12 +34,12 @@ end
 function photosynthesis(
   photo::Photosynthesis_Rong2018{T},
   Tavg::T, Rs::T, VPD::T, LAI::T, Ca::T=380.0, PC::T=1.0) where {T<:Real}
-  (; α, η, VCmax25, d_pc, kQ) = photo
+  (; α, η, VCmax25, d_PC, kQ) = photo
 
   PAR = 0.45 * Rs # W m-2, taken as 0.45 time of solar radiation
   PAR_mol = PAR * 4.57 # 1 W m-2 = 4.57 umol m-2 s-1
 
-  Vm = VCmax25 * T_adjust_Vm25(Tavg) * PC^d_pc # * data$dhour_norm^2 
+  Vm = VCmax25 * T_adjust_Vm25(Tavg) * PC^d_PC # * data$dhour_norm^2 
   Am = Vm # 认为最大光合速率 = 最大羧化能力
 
   P1 = Am * α * η * PAR_mol

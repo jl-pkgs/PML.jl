@@ -16,7 +16,7 @@ using SPAC, Test
   r_veg = evapotranspiration(air, canopy_veg, evap, photo, stomatal)
 
   r_bare.ET_water == r_veg.ET_water
-  @test r_bare[[:GPP, :Ec, :Ecr, :Eca, :Ei, :Pi]] == (; GPP=0.0, Ec=0.0, Ecr=0.0, Eca=0.0, Ei=0.0, Pi=0.0)
+  @test r_bare[[:GPP, :Ec, :Ecr, :Eca, :Ei, :Pi]] == zeros(6)
 
   model = LandModel{FT}(; evap, photo, stomatal)
   Params(model) |> DataFrame

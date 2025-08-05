@@ -17,22 +17,29 @@ end
 _fieldname(x, field::Symbol) = field
 
 "递归获取模型参数属性"
-function get_ModelParamRecursive(x::T, path=Vector{Symbol}(); fun=bounds) where {FT,T<:AbstractModel{FT}}
+function get_ModelParamRecur(x::T, path=Vector{Symbol}(); fun=bounds) where {FT,T<:AbstractModel{FT}}
   fileds = fieldnames(T) |> collect
   map(field -> begin
       value = getfield(x, field)
       _path = [path..., field]
       r = fun(x, field)
-      typeof(value) == FT ? (_path => r) : get_ModelParamRecursive(value, _path; fun)
+      TYPE = typeof(value)
+      if TYPE == FT 
+        return (_path => r) 
+      elseif TYPE <: AbstractModel
+        get_ModelParamRecur(value, _path; fun)
+      else
+        return []
+      end
     end, fileds) |> unlist
 end
 
 
 function Params(model::AbstractModel)
-  _names = get_ModelParamRecursive(model; fun=_fieldname)
-  _bounds = get_ModelParamRecursive(model; fun=bounds)
-  _values = get_ModelParamRecursive(model; fun=getfield)
-  _units = get_ModelParamRecursive(model; fun=units)
+  _names = get_ModelParamRecur(model; fun=_fieldname)
+  _bounds = get_ModelParamRecur(model; fun=bounds)
+  _values = get_ModelParamRecur(model; fun=getfield)
+  _units = get_ModelParamRecur(model; fun=units)
 
   # 返回NamedTuple向量，符合Tables接口
   [(name=last(n), value=last(v), bound=last(b),

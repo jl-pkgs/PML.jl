@@ -34,7 +34,8 @@ end
 2. Zhang Yongqiang, 2019, RSE
 3. Kong Dongdong, 2019, ISPRS
 """
-function evapotranspiration(
+function evapotranspiration!(
+  output::SpacOutput{T},
   air::AirLayer{T},
   canopy::BigLeaf{T},
   evap::AbstractEvapotranspirationModel{T},
@@ -66,33 +67,68 @@ function evapotranspiration(
   Ec, Ecr, Eca, ra = ET0_Monteith65(Rn_c, Tavg, VPD, U2, Pa;
     rs, hc, z_wind=2.0) # fix this part
 
-  # TODO: 补充冰面蒸发的计算
+  ## 需要根据前期 Pi/Es_eq 去计算土壤水限制β，因此无法立即给出Es
   Es_eq = Δ / (Δ + γ) * Rn_s |> x -> W2mm(x, λ) # 土壤均衡蒸发
-  (; GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, ET_water, rs, ra)
-end
-# r.Es_eq = r.Eeq * exp(-0.9 * LAI) # Ka = 0.9, insensitive param
-
-function transpiration()
+  @pack! output = GPP, Ec, Ecr, Eca, Ei, Pi, Es_eq, ET_water, rs, ra
+  return output
 end
 
-function evaporation()
-end
-
-
-function leaf_conductance(
-  air::AirLayer{T},
-  canopy::AbstractLeaf{T},
+function evapotranspiration(
+  air::AirLayer{T}, canopy::BigLeaf{T},
+  evap::AbstractEvapotranspirationModel{T},
   photo::AbstractPhotosynthesisModel{T},
-  stomatal::AbstractStomatalModel{T}) where {T}
+  stomatal::AbstractStomatalModel{T}) where {T<:Real}
 
-  (; Tavg, Rs, VPD, Pa, Ca, PC) = air
-  (; Lai) = canopy
-  Lai <= 0.01 && return T(0.0), T(0.0) # GPP, rs # 无冠层无rs
+  output = SpacOutput{T}()
+  evapotranspiration!(output, air, canopy, evap, photo, stomatal)
+end
 
-  Ag, Rd = photosynthesis(photo, Tavg, Rs, VPD, Lai, Ca, PC)
-  GPP = umol2gC(Ag)
 
-  gs = stomatal_conductance(stomatal, Ag, Rd, VPD, Ca) # [mol m-2 s-1], 0.1~0.4
-  rs = 1 / mol2m(gs, Tavg, Pa)
-  GPP, rs
+"""
+    PMLV2(Prcp, Tavg, Rs, Rn, VPD, U2, LAI, Pa, Ca; par=param0, frame=3)
+
+# Notes
+一个站点的计算。注意，不同植被类型，参数不同。
+
+# Arguments
+- `frame`: in 8-days
+"""
+function evapotranspiration(
+  evap::AbstractEvapotranspirationModel{T},
+  photo::AbstractPhotosynthesisModel{T},
+  stomatal::AbstractStomatalModel{T},
+  Lai::V,
+  Prcp::V, Tavg::V, Rs::V, Rn::V,
+  VPD::V, U2::V,
+  Pa::V, Ca::V, PC::Union{T,V}=T(1.0);
+  frame::Int=3,
+  res::Union{Nothing,SpacOutputs}=nothing) where {T<:Real,V<:AbstractVector{T}}
+
+  # 是否开启光周期
+  (; use_PC) = photo
+  !isa(PC, Vector) && (use_PC = false)
+
+  canopy = BigLeaf{T}() # 先测试大叶模型
+  air = AirLayer{T}()
+  r = SpacOutput{T}()
+
+
+  n = length(Prcp)
+  res === nothing && (res = SpacOutputs{T}(; n))
+
+  @inbounds for t = 1:n
+    _PC = use_PC ? PC[t] : T(1.0)
+    update!(air, Prcp[i], Tavg[i], Rs[i], Rn[i], VPD[i], U2[i], Pa[i]; Ca=Ca, PC=_PC)
+    canopy.Lai = Lai[i]
+
+    evapotranspiration!(r, air, canopy, evap, photo, stomatal)
+    res[i] = r
+  end
+
+  res.β_Es = movmean2(res.Pi, frame, 0) ./ movmean2(res.Es_eq, frame, 0)
+  clamp!(res.β_Es, 0, 1)
+
+  res.Es .= res.β_Es .* res.Es_eq
+  res.ET .= res.Ec .+ res.Ei .+ res.Es
+  res
 end

@@ -7,26 +7,6 @@ export map_df_tuple
 round2(x::NamedTuple, digits=3; kw...) = map(val -> round(val; digits), x)
 
 
-function movmean2(y::AbstractVector{T}, win_left::Integer, win_right::Integer=0) where {T<:Real}
-  n = length(y)
-  z = zeros(Float64, n)
-
-  @inbounds for i in 1:n
-    i_beg = max(i - win_left, 1)
-    i_end = min(i + win_right, n)
-
-    count = 0    # number
-    ∑ = T(0.0)   # sum of values in window
-    for j in i_beg:i_end
-      isnan(y[j]) && continue # skip missing values
-      count += 1
-      ∑ += y[j]
-    end
-    z[i] = count > 0 ? ∑ / count : T(NaN)
-  end
-  return z
-end
-
 function nanmean2(x::T1, y::T2) where {T1<:Real, T2<:Real}
   T = promote_type(T1, T2)
   if isnan(x)
