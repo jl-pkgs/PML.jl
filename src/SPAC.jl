@@ -9,6 +9,7 @@ export DataFrame, GOF
 export fread, fwrite, melt_list
 
 
+using UnPack
 using Parameters, FieldMetadata
 using DataFrames
 using Statistics

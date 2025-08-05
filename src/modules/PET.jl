@@ -120,6 +120,19 @@ MJ2W(x::T) where {T<:Real} = x / 0.086400  # x * 1e6 / 86400
 # λ: latent heat of vaporization (MJ kg-1)
 cal_lambda(Ta::T) where {T<:Real} = 2.501 - 2.361 / 1000 * Ta # FAO65, Eq. 3-1
 
+
+# γ: "kPa / K"
+function cal_gamma(Tair::T, Pa::T=atm) where {T<:Real}
+  λ = cal_lambda(Tair)
+  Cp * Pa / (ϵ * λ)
+end
+
+function cal_bowen(Tair::T, Pa::T=atm) where {T<:Real}
+  Δ = cal_slope(Tair)
+  γ = cal_gamma(Tair, Pa)
+  γ / Δ
+end
+
 # cal_gamma(Pa, λ) = (Cp * Pa) / (ϵ * λ)
 cal_es(Ta::T) where {T<:Real} = 0.6108 * exp((17.27 * Ta) / (Ta + 237.3))
 

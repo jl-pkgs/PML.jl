@@ -92,3 +92,51 @@ end
 # BigLeaf{Float32}()
 # Ec_CanopyTrans
 # Es_EvapSoil
+
+"""
+    OverUnderCanopy{FT}
+
+A two-layer (overstory and understory) canopy model structure.
+"""
+@with_kw mutable struct OverUnderCanopy{FT} <: AbstractLeaf{FT}
+  # Inputs
+  LAI_over::FT = 1.5   # Overstory LAI [m2 m-2]
+  LAI_under::FT = 0.5  # Understory LAI [m2 m-2]
+
+  # Partitioned Radiation
+  Rn_over::FT = 0.0    # Net radiation for overstory [W m-2]
+  Rn_under::FT = 0.0   # Net radiation for understory [W m-2]
+  Rn_soil::FT = 0.0    # Net radiation for soil [W m-2]
+
+  # Outputs
+  GPP_over::FT = 0.0   # GPP from overstory [gC m-2 d-1]
+  GPP_under::FT = 0.0  # GPP from understory [gC m-2 d-1]
+  Ec_over::FT = 0.0    # Transpiration from overstory [mm d-1]
+  Ec_under::FT = 0.0   # Transpiration from understory [mm d-1]
+  Es::FT = 0.0         # Soil evaporation [mm d-1]
+end
+
+"""
+    radiative_transfer_2layer!(canopy::OverUnderCanopy{T}, Rn::T; kA::T=T(0.7)) where {T}
+
+Partition net radiation `Rn` into overstory, understory, and soil based on Beer's Law.
+"""
+function radiative_transfer_2layer!(canopy::OverUnderCanopy{T}, Rn::T; kA::T=T(0.7)) where {T}
+  (; LAI_over, LAI_under) = canopy
+  
+  # Radiation partitioning based on Beer's Law
+  τ_over = exp(-kA * LAI_over)
+  τ_under = exp(-kA * LAI_under)
+
+  # Energy absorbed by overstory
+  canopy.Rn_over = Rn * (1 - τ_over)
+  
+  # Energy that penetrates overstory and reaches understory
+  Rn_penetrated = Rn * τ_over
+  
+  # Energy absorbed by understory
+  canopy.Rn_under = Rn_penetrated * (1 - τ_under)
+  
+  # Energy that penetrates both layers and reaches the soil
+  canopy.Rn_soil = Rn_penetrated * τ_under
+end

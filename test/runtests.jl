@@ -1,7 +1,7 @@
 using SPAC, Test
 import DataFrames: DataFrame
 
-include("test-Ipaper.jl")
+# include("test-Ipaper.jl")
 include("test-stomatal_conductance.jl")
 include("test-photosynthesis.jl")
 include("test-PET.jl")

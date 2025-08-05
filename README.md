@@ -1,4 +1,5 @@
-# Penman-Monteith-Leuning (SPAC) Evapotranspiration in Julia
+<!-- # Penman-Monteith-Leuning (SPAC) Evapotranspiration in Julia -->
+# Soil Plant Atmosphere Continuum (SPAC.jl) based ET and GPP simulation in Julia
 
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://jl-pkgs.github.io/SPAC.jl/dev)
 [![CI](https://github.com/jl-pkgs/SPAC.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/jl-pkgs/SPAC.jl/actions/workflows/CI.yml)
@@ -17,16 +18,23 @@
 
 ### 模型结构
 
-- [ ] 单独率定GPP
+- [x] 单独率定GPP
 - [ ] 小时尺度模型构建，解析蒸发信号
 - [ ] 土壤水限制方案
 
 ### 模型表现
 
-- [ ] 1. 检查`SPACV2`敏感性参数
+- [ ] 1. 检查`SPAC`敏感性参数
 
 - [ ] 2. 测试LAI除噪的效果
 
 - [ ] 3. 双生长季，WIP
 
 - [ ] 4. C3/C4
+
+<!-- 
+### Gemini
+```bash
+$env:HTTP_PROXY="http://127.0.0.1:1081"
+$env:HTTPS_PROXY="http://127.0.0.1:1081"
+``` -->
