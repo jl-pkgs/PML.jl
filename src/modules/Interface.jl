@@ -56,7 +56,7 @@ end
 
 @with_kw mutable struct LandModel{FT} <: AbstractModel{FT}
   # atmospheric_forcing::AtmosphericForcing
+  evap::AbstractEvapotranspirationModel{FT}
+  photo::AbstractPhotosynthesisModel{FT}
   stomatal::AbstractStomatalModel{FT}
-  photosynthesis::AbstractPhotosynthesisModel{FT}
-  # evapotranspiration::AbstractEvapotranspirationModel{FT}
 end
