@@ -1,5 +1,27 @@
 export Norman_Shortwave
 
+
+
+@with_kw struct CanopyLeaves{FT}
+  nlayer::Int = 2
+  LAI::FT = 2.0
+  Ω::FT = 1.0
+  dLAI::Vector{FT} = ones(FT, nlayer) .* (LAI / nlayer)
+
+  # 从下标从地面开始，从下至上
+  LAI_sunlit::Vector{FT} = zeros(FT, nlayer)
+  LAI_shaded::Vector{FT} = zeros(FT, nlayer)
+
+  τ_d::Vector{FT} = zeros(FT, nlayer) # diffuse
+  τ_b::Vector{FT} = zeros(FT, nlayer) # beam 
+
+  Rs_up::Vector{FT} = zeros(FT, nlayer) # [I↑₁, I↑₂, ..., I↑ₙ]
+  Rs_dn::Vector{FT} = zeros(FT, nlayer) # [I↓₁, I↓₂, ..., I↓ₙ]
+
+  tridiag::TriDiagonal{FT} = TriDiagonal{FT}(; n=(nlayer + 1) * 2)
+end
+
+
 function Norman_Shortwave(
   dLAI,
   PARdir=1000, PARdif=200,
@@ -7,11 +29,9 @@ function Norman_Shortwave(
   ρ_soil_dir=0.1, ρ_soil_dif=0.1,
   cosz=0.88, chil=0.1, Ω=0.8)
 
-  nlayers = length(dLAI)
-  # if length(dLAI) != nlayers
-  #   println("Error: the input parameters nlayers does not correspond to the length of the input vector dLAI")
-  # end
-  dLAI = reverse(dLAI)
+  nlayer = length(dLAI)
+  dLAI = reverse(dLAI) # TODO: 为何要反转?
+
   lai = sum(dLAI)
   sumlai = vcat(NaN, lai .- cumsum(dLAI) .+ dLAI ./ 2)
   dLAI = vcat(NaN, dLAI)
@@ -31,35 +51,34 @@ function Norman_Shortwave(
 
   fracsun = Ω * exp.(-Kb * sumlai * Ω)
   fracsha = 1 .- fracsun
-
-  laisun = (1 - exp(-Kb * lai * Ω)) / Kb
+  # laisun = (1 - exp(-Kb * lai * Ω)) / Kb
   # laisha = lai - laisun
 
   τ_b = exp.(-Kb * dLAI * Ω)
   τ_d = zeros(length(dLAI))
   for j in 1:9
     angle = (5 + (j - 1) * 10) * pi / 180
-    gdirj = phi1 + phi2 * cos(angle)
-    τ_d = τ_d .+ exp.(-gdirj / cos(angle) * dLAI * Ω) .* sin(angle) .* cos(angle)
+    G_μ = phi1 + phi2 * cos(angle)
+    τ_d = τ_d .+ exp.(-G_μ / cos(angle) * dLAI * Ω) .* sin(angle) .* cos(angle)
   end
   τ_d = τ_d .* 2 .* (10 * pi / 180)
 
-  τ_bcum = vcat(fill(NaN, nlayers + 1))
+  τ_bcum = vcat(fill(NaN, nlayer + 1))
   cumlai = 0
-  iv = nlayers + 1
+  iv = nlayer + 1
   τ_bcum[iv] = 1
-  for iv in (nlayers+1):-1:2
+  for iv in (nlayer+1):-1:2
     cumlai += dLAI[iv]
     τ_bcum[iv-1] = exp(-Kb * cumlai * Ω)
   end
   # println("Radiation model for a total LAI of ", lai)
 
-  swup = zeros(nlayers + 1)
-  swdn = zeros(nlayers + 1)
-  a = zeros(nlayers * 2 + 2)
-  b = zeros(nlayers * 2 + 2)
-  c = zeros(nlayers * 2 + 2)
-  d = zeros(nlayers * 2 + 2)
+  swup = zeros(nlayer + 1)
+  swdn = zeros(nlayer + 1)
+  a = zeros(nlayer * 2 + 2)
+  b = zeros(nlayer * 2 + 2)
+  c = zeros(nlayer * 2 + 2)
+  d = zeros(nlayer * 2 + 2)
 
   ϵ = 1 - (ρ + τ_l)
   m = 1
@@ -81,9 +100,9 @@ function Norman_Shortwave(
   c[m] = -biv
   d[m] = PARdir * τ_bcum[iv+1] * (1 - τ_b[iv+1]) * (τ_l - ρ * biv)
 
-# 这里有优化的空间
+  # 这里有优化的空间
   # Leaf layers, excluding top layer
-  for iv in 2:nlayers
+  for iv in 2:nlayer
     # Upward flux
     refld = (1 - τ_d[iv]) * ρ
     trand = (1 - τ_d[iv]) * τ_l + τ_d[iv]
@@ -110,7 +129,7 @@ function Norman_Shortwave(
   end
 
   # Top canopy layer: upward flux
-  iv = nlayers + 1
+  iv = nlayer + 1
   refld = (1 - τ_d[iv]) * ρ
   trand = (1 - τ_d[iv]) * τ_l + τ_d[iv]
   fiv = refld - trand * trand / refld
@@ -141,7 +160,7 @@ function Norman_Shortwave(
   swdn[iv] = u[m]
 
   # Leaf layer fluxes
-  for iv in 2:(nlayers+1)
+  for iv in 2:(nlayer+1)
     i1 = (iv - 1) * 2 + 1
     i2 = (iv - 1) * 2 + 2
     swup[iv] = u[i1]
@@ -160,10 +179,10 @@ function Norman_Shortwave(
   swveg = 0
   swvegsun = 0
   swvegsha = 0
-  swleafsun = zeros(nlayers + 1)
-  swleafsha = zeros(nlayers + 1)
+  Rs_sun = zeros(nlayer + 1)
+  Rs_sha = zeros(nlayer + 1)
 
-  for iv in 2:(nlayers+1)
+  for iv in 2:(nlayer+1)
     # Per unit ground area (W/m2 ground)
     direct = PARdir * τ_bcum[iv] * (1 - τ_b[iv]) * ϵ
     diffuse = (swdn[iv] + swup[iv-1]) * (1 - τ_d[iv]) * ϵ
@@ -174,8 +193,8 @@ function Norman_Shortwave(
     shade = diffuse * fracsha[iv]
 
     # Convert to per unit sunlit and shaded leaf area (W/m2 leaf)
-    swleafsun[iv] = sun / (fracsun[iv] * dLAI[iv])
-    swleafsha[iv] = shade / (fracsha[iv] * dLAI[iv])
+    Rs_sun[iv] = sun / (fracsun[iv] * dLAI[iv])
+    Rs_sha[iv] = shade / (fracsha[iv] * dLAI[iv])
 
     # Sum fluxes over all leaf layers
     swveg = swveg + (direct + diffuse)
@@ -185,7 +204,7 @@ function Norman_Shortwave(
 
   # --- Albedo
   incoming = PARdir + PARdif
-  reflected = swup[nlayers+1]
+  reflected = swup[nlayer+1]
   albcan = incoming > 0 ? reflected / incoming : 0
 
   # --- Conservation check
@@ -207,18 +226,12 @@ function Norman_Shortwave(
     error("NormanRadiation: Sunlit/shade solar conservation error")
   end
 
-  (; 
-    PAR_sun = reverse(swleafsun[2:(nlayers+1)]),
-    PAR_sha = reverse(swleafsha[2:(nlayers+1)]),
-    frac_sha = reverse(fracsha[2:(nlayers+1)]),
-    frac_sun = reverse(fracsun[2:(nlayers+1)])
+  (;
+    PAR_sun=reverse(Rs_sun[2:(nlayer+1)]),
+    PAR_sha=reverse(Rs_sha[2:(nlayer+1)]),
+    frac_sha=reverse(fracsha[2:(nlayer+1)]),
+    frac_sun=reverse(fracsun[2:(nlayer+1)])
   )
-  # return OrderedDict(
-  #   "PARsun" => reverse(swleafsun[2:(nlayers+1)]),
-  #   "PARsha" => reverse(swleafsha[2:(nlayers+1)]),
-  #   "fracsha" => reverse(fracsha[2:(nlayers+1)]),
-  #   "fracsun" => reverse(fracsun[2:(nlayers+1)])
-  # )
 end
 
 
