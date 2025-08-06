@@ -1,7 +1,6 @@
 export Norman_Shortwave
 
 
-
 @with_kw struct CanopyLeaves{FT}
   nlayer::Int = 2
   LAI::FT = 2.0
@@ -24,42 +23,36 @@ end
 
 function Norman_Shortwave(
   dLAI,
-  PARdir=1000, PARdif=200,
+  Rs_dir=1000, Rs_dif=200,
   ρ=0.1, τ_l=0.05,
   ρ_soil_dir=0.1, ρ_soil_dif=0.1,
-  cosz=0.88, chil=0.1, Ω=0.8)
+  cosZ=0.88, χₗ=0.1, Ω=0.8)
 
   nlayer = length(dLAI)
   dLAI = reverse(dLAI) # TODO: 为何要反转?
 
   lai = sum(dLAI)
   sumlai = vcat(NaN, lai .- cumsum(dLAI) .+ dLAI ./ 2)
-  dLAI = vcat(NaN, dLAI)
+  dLAI = vcat(NaN, dLAI) # 增加地表
 
-  if chil > 0.6 || chil < -0.4
-    println("Chil is not inside the interval -0.4, 0.6 and was changed")
-  end
+  Φ1 = 0.5 - 0.633 * χₗ - 0.330 * χₗ^2
+  Φ2 = 0.877 * (1 - 2 * Φ1)
+  G = Φ1 + Φ2 * cosZ # Bonan 2019, Eq. 14.31, only valid in -0.4 < χℓ < 0.6
 
-  chil = clamp(chil, -0.4, 0.6)
-  phi1 = 0.5 - 0.633 * chil - 0.330 * chil^2
-  phi2 = 0.877 * (1 - 2 * phi1)
-
-  gdir = phi1 + phi2 * cosz
-
-  Kb = gdir / cosz
-  Kb = min(Kb, 20)
-
-  fracsun = Ω * exp.(-Kb * sumlai * Ω)
-  fracsha = 1 .- fracsun
+  Kb = min(G / cosZ, 20.0)
+  f_sun = Ω * exp.(-Kb * sumlai * Ω)
+  f_sha = 1 .- f_sun
   # laisun = (1 - exp(-Kb * lai * Ω)) / Kb
   # laisha = lai - laisun
 
   τ_b = exp.(-Kb * dLAI * Ω)
   τ_d = zeros(length(dLAI))
+  
+  ## 分成9份，每份10°
   for j in 1:9
-    angle = (5 + (j - 1) * 10) * pi / 180
-    G_μ = phi1 + phi2 * cos(angle)
-    τ_d = τ_d .+ exp.(-G_μ / cos(angle) * dLAI * Ω) .* sin(angle) .* cos(angle)
+    Zᵢ = (5 + (j - 1) * 10) |> deg2rad
+    G_μ = Φ1 + Φ2 * cos(Zᵢ)
+    τ_d = τ_d .+ exp.(-G_μ / cos(Zᵢ) * dLAI * Ω) .* sin(Zᵢ) .* cos(Zᵢ) # Eq. 14.33
   end
   τ_d = τ_d .* 2 .* (10 * pi / 180)
 
@@ -73,8 +66,9 @@ function Norman_Shortwave(
   end
   # println("Radiation model for a total LAI of ", lai)
 
-  swup = zeros(nlayer + 1)
-  swdn = zeros(nlayer + 1)
+  I_up = zeros(nlayer + 1)
+  I_dn = zeros(nlayer + 1)
+
   a = zeros(nlayer * 2 + 2)
   b = zeros(nlayer * 2 + 2)
   c = zeros(nlayer * 2 + 2)
@@ -86,7 +80,7 @@ function Norman_Shortwave(
   a[m] = 0
   b[m] = 1
   c[m] = -ρ_soil_dif
-  d[m] = PARdir * τ_bcum[m] * ρ_soil_dir
+  d[m] = Rs_dir * τ_bcum[m] * ρ_soil_dir
 
   # Soil: downward flux
   refld = (1 - τ_d[iv+1]) * ρ
@@ -98,7 +92,7 @@ function Norman_Shortwave(
   a[m] = -aiv
   b[m] = 1
   c[m] = -biv
-  d[m] = PARdir * τ_bcum[iv+1] * (1 - τ_b[iv+1]) * (τ_l - ρ * biv)
+  d[m] = Rs_dir * τ_bcum[iv+1] * (1 - τ_b[iv+1]) * (τ_l - ρ * biv)
 
   # 这里有优化的空间
   # Leaf layers, excluding top layer
@@ -113,7 +107,7 @@ function Norman_Shortwave(
     a[m] = -eiv
     b[m] = 1
     c[m] = -fiv
-    d[m] = PARdir * τ_bcum[iv] * (1 - τ_b[iv]) * (ρ - τ_l * eiv)
+    d[m] = Rs_dir * τ_bcum[iv] * (1 - τ_b[iv]) * (ρ - τ_l * eiv)
 
     # Downward flux
     refld = (1 - τ_d[iv+1]) * ρ
@@ -125,7 +119,7 @@ function Norman_Shortwave(
     a[m] = -aiv
     b[m] = 1
     c[m] = -biv
-    d[m] = PARdir * τ_bcum[iv+1] * (1 - τ_b[iv+1]) * (τ_l - ρ * biv)
+    d[m] = Rs_dir * τ_bcum[iv+1] * (1 - τ_b[iv+1]) * (τ_l - ρ * biv)
   end
 
   # Top canopy layer: upward flux
@@ -139,14 +133,14 @@ function Norman_Shortwave(
   a[m] = -eiv
   b[m] = 1
   c[m] = -fiv
-  d[m] = PARdir * τ_bcum[iv] * (1 - τ_b[iv]) * (ρ - τ_l * eiv)
+  d[m] = Rs_dir * τ_bcum[iv] * (1 - τ_b[iv]) * (ρ - τ_l * eiv)
 
   # Top canopy layer: downward flux
   m += 1
   a[m] = 0
   b[m] = 1
   c[m] = 0
-  d[m] = PARdif
+  d[m] = Rs_dif
   u = tridiagonal_solver(a, b, c, d) # Solve tridiagonal equations for fluxes
 
   # Now copy the solution (u) to the upward (swup) and downward (swdn) fluxes for each layer
@@ -155,23 +149,23 @@ function Norman_Shortwave(
   # Soil fluxes
   iv = 1
   m = 1
-  swup[iv] = u[m]
+  I_up[iv] = u[m]
   m += 1
-  swdn[iv] = u[m]
+  I_dn[iv] = u[m]
 
   # Leaf layer fluxes
   for iv in 2:(nlayer+1)
     i1 = (iv - 1) * 2 + 1
     i2 = (iv - 1) * 2 + 2
-    swup[iv] = u[i1]
-    swdn[iv] = u[i2]
+    I_up[iv] = u[i1]
+    I_dn[iv] = u[i2]
   end
 
   # --- Compute flux densities
   # Absorbed direct beam and diffuse for ground (soil)
   iv = 1
-  direct = PARdir * τ_bcum[iv] * (1 - ρ_soil_dir)
-  diffuse = swdn[iv] * (1 - ρ_soil_dif)
+  direct = Rs_dir * τ_bcum[iv] * (1 - ρ_soil_dir)
+  diffuse = I_dn[iv] * (1 - ρ_soil_dif)
   swsoi = direct + diffuse
 
   # Absorbed direct beam and diffuse for each leaf layer and sum
@@ -184,17 +178,17 @@ function Norman_Shortwave(
 
   for iv in 2:(nlayer+1)
     # Per unit ground area (W/m2 ground)
-    direct = PARdir * τ_bcum[iv] * (1 - τ_b[iv]) * ϵ
-    diffuse = (swdn[iv] + swup[iv-1]) * (1 - τ_d[iv]) * ϵ
+    direct = Rs_dir * τ_bcum[iv] * (1 - τ_b[iv]) * ϵ
+    diffuse = (I_dn[iv] + I_up[iv-1]) * (1 - τ_d[iv]) * ϵ
 
     # Absorbed solar radiation for shaded and sunlit portions of leaf layer
     # per unit ground area (W/m2 ground)
-    sun = diffuse * fracsun[iv] + direct
-    shade = diffuse * fracsha[iv]
+    sun = diffuse * f_sun[iv] + direct
+    shade = diffuse * f_sha[iv]
 
     # Convert to per unit sunlit and shaded leaf area (W/m2 leaf)
-    Rs_sun[iv] = sun / (fracsun[iv] * dLAI[iv])
-    Rs_sha[iv] = shade / (fracsha[iv] * dLAI[iv])
+    Rs_sun[iv] = sun / (f_sun[iv] * dLAI[iv])
+    Rs_sha[iv] = shade / (f_sha[iv] * dLAI[iv])
 
     # Sum fluxes over all leaf layers
     swveg = swveg + (direct + diffuse)
@@ -203,14 +197,14 @@ function Norman_Shortwave(
   end
 
   # --- Albedo
-  incoming = PARdir + PARdif
-  reflected = swup[nlayer+1]
+  incoming = Rs_dir + Rs_dif
+  reflected = I_up[nlayer+1]
   albcan = incoming > 0 ? reflected / incoming : 0
 
   # --- Conservation check
   # Total radiation balance: absorbed = incoming - outgoing
-  suminc = PARdir + PARdif
-  sumref = albcan * (PARdir + PARdif)
+  suminc = Rs_dir + Rs_dif
+  sumref = albcan * (Rs_dir + Rs_dif)
   sumabs = suminc - sumref
 
   err = sumabs - (swveg + swsoi)
@@ -229,23 +223,7 @@ function Norman_Shortwave(
   (;
     PAR_sun=reverse(Rs_sun[2:(nlayer+1)]),
     PAR_sha=reverse(Rs_sha[2:(nlayer+1)]),
-    frac_sha=reverse(fracsha[2:(nlayer+1)]),
-    frac_sun=reverse(fracsun[2:(nlayer+1)])
+    frac_sha=reverse(f_sha[2:(nlayer+1)]),
+    frac_sun=reverse(f_sun[2:(nlayer+1)])
   )
 end
-
-
-
-# function update_ef2(atri, btri, ctri, dtri, ir_source, td, iv, m)
-#   refld = (1 - td[iv]) * ρ
-#   trand = (1 - td[iv]) * τ + td[iv]
-#   fiv = refld - trand * trand / refld
-#   eiv = trand / refld
-
-#   atri[m] = -eiv
-#   btri[m] = 1
-#   ctri[m] = -fiv
-#   dtri[m] = (1 - eiv) * ir_source[iv]
-#   nothing
-#   # fiv, eiv
-# end
