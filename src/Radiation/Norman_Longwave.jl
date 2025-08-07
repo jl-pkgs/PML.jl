@@ -11,6 +11,8 @@ export Norman_Longwave;
 - `LAI`   : Leaf area index (m2/m2)
 - `L_sky` : Atmospheric longwave radiation (W/m2)
 
+- τl: Leaf transmittance
+
 # Examples
 ```julia
 n = 50
@@ -27,6 +29,7 @@ L_up, L_dn, Rln, Rln_soil, Rln_veg = Norman_Longwave(T_leaf, ϵ, τd)
 function Norman_Longwave(
   T_leaf::V, ϵ::V, τd::V,
   L_sky=400.0;
+  τl=T(0),
   check_error=true) where {T<:Real, V<:AbstractVector{T}}
 
   ϵ_g = ϵ[1]
@@ -38,12 +41,12 @@ function Norman_Longwave(
 
   ω = 1 .- ϵ # Leaf scattering coefficient
   ρ = ω     # Leaf reflectance
-  τl = T(0)     # Leaf transmittance
 
   params = (; T_leaf, ϵ, τd, ρ, τl)
 
   ## 1. solve longwave radiation -----------------------------------------------
   nlayer = ntop
+
   atri = zeros(nlayer * 2)
   btri = zeros(nlayer * 2)
   ctri = zeros(nlayer * 2)
@@ -112,6 +115,7 @@ function Norman_Longwave(
 end
 
 
+
 # global variable: atri, btri, ctri, dtri, ir_source, τd
 function update_ef(atri::V, btri::V, ctri::V, dtri::V,
   τl::T, τd::V, ρ, ir_source::V,
@@ -137,6 +141,7 @@ function update_ef(atri::V, btri::V, ctri::V, dtri::V,
     dtri[m] = (1 - biv) * ir_source[i]
   end
 end
+
 
 
 # L_up, L_dn = U2longwave(U; nsoi)
