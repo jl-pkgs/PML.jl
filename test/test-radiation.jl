@@ -12,7 +12,8 @@ using SPAC, Test
 end
 
 @testset "Norman_Shortwave" begin
-  dLAI = [0.1, 0.2, 0.3]
+  # 从下到上
+  dLAI = [0.1, 0.2, 0.3] |> reverse
   PAR_sun, PAR_sha, frac_sha, frac_sun = Norman_Shortwave(dLAI)
   @test PAR_sha ≈ [168.89332828782798, 159.20858966542008, 143.23329123213492]
 end

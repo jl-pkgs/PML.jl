@@ -1,5 +1,20 @@
 using Dates
 
+"""
+blackbody radiation
+
+# Arguments
+- `Ta`: air temperature, in degC
+- `ϵ`: emissivity, default is 1
+
+# Return
+- longwave radiation, in `W m-2`
+"""
+function blackbody(ϵ::T, Ta::T) where {T<:Real}
+  σ = 5.67e-8
+  ϵ * σ * (Ta + K0)^4
+end
+
 
 """
 任一点，任一时刻的太阳高度角
@@ -44,8 +59,135 @@ end
 - `Z`: 太阳天顶角，[0, pi/2]，中午为0。sinh = cosZ
 """
 function cal_G(χₗ::T, cosZ::T) where {T}
-  Φ1 = 0.5 - 0.633 * χₗ - 0.330 * χₗ^2
-  Φ2 = 0.877 * (1 - 2 * Φ1)
+  φ₁ = 0.5 - 0.633 * χₗ - 0.330 * χₗ^2
+  φ₂ = 0.877 * (1 - 2 * φ₁)
   # This equation is restricted to 0:4 < χℓ < 0:6
-  Φ1 + Φ2 * cosZ # Bonan 2019, Eq. 14.31
+  φ₁ + φ₂ * cosZ # Bonan 2019, Eq. 14.31
+end
+
+
+function cal_τb_cum(Kb::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
+  nlayer = length(dLAI) - 1
+  τb_cum = fill(T(NaN), nlayer + 1) # 第一层是地表
+  
+  τb_cum[end] = 1.0
+  ∑LAI = T(0.0)
+  for i in nlayer+1:-1:2
+    ∑LAI += dLAI[i]
+    τb_cum[i-1] = exp(-Kb * ∑LAI * Ω) # TODO: 感觉有错误，应该是i
+  end
+  return τb_cum
+end
+
+
+function cal_τb(Kb::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
+  exp.(-Kb .* dLAI .* Ω)
+end
+
+
+function cal_τd(χₗ::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
+  φ₁ = 0.5 - 0.633 * χₗ - 0.330 * χₗ^2
+  φ₂ = 0.877 * (1 - 2 * φ₁)
+
+  τd = zeros(length(dLAI))
+  for j in 1:9
+    Zᵢ = (5 + (j - 1) * 10) |> deg2rad # 天顶角
+    G_μ = φ₁ + φ₂ * cos(Zᵢ)
+    τd .+= exp.(-G_μ / cos(Zᵢ) .* dLAI .* Ω) .* sin(Zᵢ) .* cos(Zᵢ)
+  end
+  τd .*= 2deg2rad(10)
+  return τd
+end
+
+
+function build_tridiag_shortwave!(
+  tridiag::TriDiagonal{T},
+  nlayer::Int,
+  τd::Vector{T}, τb::Vector{T}, τb_cum::Vector{T},
+  Rs_dir::T, Rs_dif::T,
+  ρ::T, τ_l::T,
+  ρ_soil_dir::T, ρ_soil_dif::T
+) where {T}
+  (; a, b, c, d) = tridiag # n = nlayer * 2 + 2  
+
+  # Soil: upward
+  m = 1
+  iv = 1
+  a[m] = T(0)
+  b[m] = T(1)
+  c[m] = -ρ_soil_dif
+  d[m] = Rs_dir * τb_cum[m] * ρ_soil_dir
+
+  # Soil: downward
+  refld = (1 - τd[iv+1]) * ρ
+  trand = (1 - τd[iv+1]) * τ_l + τd[iv+1]
+  aiv = refld - trand^2 / refld
+  biv = trand / refld
+
+  m = 2
+  a[m] = -aiv
+  b[m] = T(1)
+  c[m] = -biv
+  d[m] = Rs_dir * τb_cum[iv+1] * (1 - τb[iv+1]) * (τ_l - ρ * biv)
+
+  # Leaf layers
+  @inbounds for iv in 2:nlayer
+    # Upward
+    refld = (1 - τd[iv]) * ρ
+    trand = (1 - τd[iv]) * τ_l + τd[iv]
+    fiv = refld - trand^2 / refld
+    eiv = trand / refld
+
+    m += 1
+    a[m] = -eiv
+    b[m] = T(1)
+    c[m] = -fiv
+    d[m] = Rs_dir * τb_cum[iv] * (1 - τb[iv]) * (ρ - τ_l * eiv)
+
+    # Downward
+    refld = (1 - τd[iv+1]) * ρ
+    trand = (1 - τd[iv+1]) * τ_l + τd[iv+1]
+    aiv = refld - trand^2 / refld
+    biv = trand / refld
+
+    m += 1
+    a[m] = -aiv
+    b[m] = T(1)
+    c[m] = -biv
+    d[m] = Rs_dir * τb_cum[iv+1] * (1 - τb[iv+1]) * (τ_l - ρ * biv)
+  end
+
+  # Top canopy layer: upward
+  iv = nlayer + 1
+  refld = (1 - τd[iv]) * ρ
+  trand = (1 - τd[iv]) * τ_l + τd[iv]
+  fiv = refld - trand^2 / refld
+  eiv = trand / refld
+
+  m += 1
+  a[m] = -eiv
+  b[m] = T(1)
+  c[m] = -fiv
+  d[m] = Rs_dir * τb_cum[iv] * (1 - τb[iv]) * (ρ - τ_l * eiv)
+
+  # Top canopy layer: downward
+  m += 1
+  a[m] = T(0)
+  b[m] = T(1)
+  c[m] = T(0)
+  d[m] = Rs_dif
+end
+
+function unpack_U_shortwave!(u::Vector{T}, I_up::Vector{T}, I_dn::Vector{T};
+  nlayer::Int) where {T}
+  I_up[1] = u[1] # I↑₀, I↓₀, ..., I↑ₙ, I↓ₙ
+  I_dn[1] = u[2]
+
+  # Leaf layer fluxes
+  @inbounds for iv in 2:(nlayer+1)
+    i1 = (iv - 1) * 2 + 1
+    i2 = (iv - 1) * 2 + 2
+    I_up[iv] = u[i1]
+    I_dn[iv] = u[i2]
+  end
 end

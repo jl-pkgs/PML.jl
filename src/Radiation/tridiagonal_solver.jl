@@ -76,7 +76,7 @@ end
   f::Vector{FT} = zeros(FT, n)
 end
 
-function tridiagonal_solver(tri::TriDiagonal{FT}) where {FT}
+function tridiagonal_solver!(tri::TriDiagonal{FT}) where {FT}
   (; u, e, f, a, b, c, d) = tri
   tridiagonal_solver!(u, e, f, a, b, c, d)
 end
