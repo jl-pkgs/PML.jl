@@ -14,6 +14,12 @@ end
 @testset "Norman_Shortwave" begin
   # 从下到上
   dLAI = [0.1, 0.2, 0.3] |> reverse
+  Kb = 1.0
+  Ω = 1.0
+  ## 
+  fsun = cal_fsun(vcat(NaN, dLAI), Kb, Ω)
+  @test fsun[2:end] == [0.6376281516217733, 0.8187307530779818, 0.9512294245007141]
+    
   PAR_sun, PAR_sha, frac_sha, frac_sun = Norman_Shortwave(dLAI)
   @test PAR_sha ≈ [168.89332828782798, 159.20858966542008, 143.23329123213492]
 end

@@ -1,3 +1,5 @@
+export cal_fsun, cal_τb_sum, cal_τb, cal_τd
+
 using Dates
 
 """
@@ -66,26 +68,27 @@ function cal_G(χₗ::T, cosZ::T) where {T}
 end
 
 
-function cal_τb_cum(Kb::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
-  nlayer = length(dLAI) - 1
-  τb_cum = fill(T(NaN), nlayer + 1) # 第一层是地表
-  
-  τb_cum[end] = 1.0
+function cal_τb_cum(dLAI::Vector{T}, Kb::T, Ω::T) where {T<:Real}
+  n = length(dLAI)
+  τb_cum = ones(T, n) # 第一层是地表
+  # τb_cum[end] = 1.0 # 确认无误, 第N层必须是1
   ∑LAI = T(0.0)
-  for i in nlayer+1:-1:2
+  for i in n:-1:2
     ∑LAI += dLAI[i]
-    τb_cum[i-1] = exp(-Kb * ∑LAI * Ω) # TODO: 感觉有错误，应该是i
+    τb_cum[i-1] = exp(-Kb * ∑LAI * Ω) # 确认无误
   end
   return τb_cum
 end
 
 
-function cal_τb(Kb::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
+# τ for Beam Radiation
+function cal_τb(dLAI::Vector{T}, Kb::T, Ω::T) where {T<:Real}
   exp.(-Kb .* dLAI .* Ω)
 end
 
 
-function cal_τd(χₗ::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
+# τ for Diffuse Radiation
+function cal_τd(dLAI::Vector{T}, χₗ::T, Ω::T) where {T<:Real}
   φ₁ = 0.5 - 0.633 * χₗ - 0.330 * χₗ^2
   φ₂ = 0.877 * (1 - 2 * φ₁)
 
@@ -100,13 +103,27 @@ function cal_τd(χₗ::T, Ω::T, dLAI::Vector{T}) where {T<:Real}
 end
 
 
+"""
+阳叶比例, Kb = L_h / L, 将L转换为有效拦截面积
+
+- `dLAI`: 0-N; 0对应地表
+"""
+function cal_fsun(dLAI::Vector{T}, Kb::T, Ω::T) where {T<:Real}
+  _dLAI = @view dLAI[2:end]
+  LAI = sum(_dLAI)
+  sumlai = vcat(NaN, LAI .- cumsum(_dLAI) .+ _dLAI ./ 2)
+  f_sun = @. Ω * exp(-Kb * Ω * sumlai) # 阳叶的比例, 光线被拦截的比例
+  return f_sun
+end
+# laisun = (1 - exp(-Kb * LAI * Ω)) / Kb # 这可能是做了一个积分
+# laisha = lai - laisun
+
+
 function build_tridiag_shortwave!(
-  tridiag::TriDiagonal{T},
-  nlayer::Int,
-  τd::Vector{T}, τb::Vector{T}, τb_cum::Vector{T},
+  tridiag::TriDiagonal{T}, nlayer::Int,
   Rs_dir::T, Rs_dif::T,
-  ρ::T, τ_l::T,
-  ρ_soil_dir::T, ρ_soil_dif::T
+  τd::Vector{T}, τb::Vector{T}, τb_cum::Vector{T}, τl::T,
+  ρ::T, ρ_soil_dir::T, ρ_soil_dif::T
 ) where {T}
   (; a, b, c, d) = tridiag # n = nlayer * 2 + 2  
 
@@ -120,7 +137,7 @@ function build_tridiag_shortwave!(
 
   # Soil: downward
   refld = (1 - τd[iv+1]) * ρ
-  trand = (1 - τd[iv+1]) * τ_l + τd[iv+1]
+  trand = (1 - τd[iv+1]) * τl + τd[iv+1]
   aiv = refld - trand^2 / refld
   biv = trand / refld
 
@@ -128,13 +145,13 @@ function build_tridiag_shortwave!(
   a[m] = -aiv
   b[m] = T(1)
   c[m] = -biv
-  d[m] = Rs_dir * τb_cum[iv+1] * (1 - τb[iv+1]) * (τ_l - ρ * biv)
+  d[m] = Rs_dir * τb_cum[iv+1] * (1 - τb[iv+1]) * (τl - ρ * biv)
 
   # Leaf layers
   @inbounds for iv in 2:nlayer
     # Upward
     refld = (1 - τd[iv]) * ρ
-    trand = (1 - τd[iv]) * τ_l + τd[iv]
+    trand = (1 - τd[iv]) * τl + τd[iv]
     fiv = refld - trand^2 / refld
     eiv = trand / refld
 
@@ -142,11 +159,11 @@ function build_tridiag_shortwave!(
     a[m] = -eiv
     b[m] = T(1)
     c[m] = -fiv
-    d[m] = Rs_dir * τb_cum[iv] * (1 - τb[iv]) * (ρ - τ_l * eiv)
+    d[m] = Rs_dir * τb_cum[iv] * (1 - τb[iv]) * (ρ - τl * eiv)
 
     # Downward
     refld = (1 - τd[iv+1]) * ρ
-    trand = (1 - τd[iv+1]) * τ_l + τd[iv+1]
+    trand = (1 - τd[iv+1]) * τl + τd[iv+1]
     aiv = refld - trand^2 / refld
     biv = trand / refld
 
@@ -154,13 +171,13 @@ function build_tridiag_shortwave!(
     a[m] = -aiv
     b[m] = T(1)
     c[m] = -biv
-    d[m] = Rs_dir * τb_cum[iv+1] * (1 - τb[iv+1]) * (τ_l - ρ * biv)
+    d[m] = Rs_dir * τb_cum[iv+1] * (1 - τb[iv+1]) * (τl - ρ * biv)
   end
 
   # Top canopy layer: upward
   iv = nlayer + 1
   refld = (1 - τd[iv]) * ρ
-  trand = (1 - τd[iv]) * τ_l + τd[iv]
+  trand = (1 - τd[iv]) * τl + τd[iv]
   fiv = refld - trand^2 / refld
   eiv = trand / refld
 
@@ -168,7 +185,7 @@ function build_tridiag_shortwave!(
   a[m] = -eiv
   b[m] = T(1)
   c[m] = -fiv
-  d[m] = Rs_dir * τb_cum[iv] * (1 - τb[iv]) * (ρ - τ_l * eiv)
+  d[m] = Rs_dir * τb_cum[iv] * (1 - τb[iv]) * (ρ - τl * eiv)
 
   # Top canopy layer: downward
   m += 1

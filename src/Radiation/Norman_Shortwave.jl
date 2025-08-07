@@ -22,39 +22,45 @@ end
 
 
 """
-- dLAI: 注意是从下之上
+    Norman_Shortwave(
+        dLAI::Vector{T},
+        Rs_dir=1000., Rs_dif=200.,
+        τl::T=0.05, ρ::T=0.1, ρ_soil_dir::T=0.1, ρ_soil_dif::T=0.1,
+        cosZ::T=0.88, χₗ::T=0.1, Ω::T=0.8) where {T<:Real}
+
+# Arguments
+- dLAI: 1-N, 注意是从下之上
+
+# 遗留问题
+1. 未考虑近红外和可见光的区别
+2. 已知有叶片倾角数据，如何设定χₗ
+3. 土壤对dir和dif的反射率
+4. 叶片透射率
+5. 找一个有多层Rs观测的站点，测试辐射传输
 """
 function Norman_Shortwave(
   dLAI::Vector{T},
   Rs_dir=1000., Rs_dif=200.,
-  ρ=0.1, τ_l=0.05,
-  ρ_soil_dir=0.1, ρ_soil_dif=0.1,
+  τl=0.05, ρ=0.1, ρ_soil_dir=0.1, ρ_soil_dif=0.1,
   cosZ=0.88, χₗ=0.1, Ω=0.8) where {T<:Real}
 
-  ϵ = 1 - (ρ + τ_l)
+  ϵ = 1 - (ρ + τl)
   nlayer = length(dLAI)
-
-  lai = sum(dLAI)
-  sumlai = vcat(NaN, lai .- cumsum(dLAI) .+ dLAI ./ 2)
   dLAI = vcat(NaN, dLAI) # 增加地表
 
-  Kb = min(cal_G(χₗ, cosZ) / cosZ, 20.0)
-  f_sun = Ω * exp.(-Kb * sumlai * Ω)
+  Kb = min(cal_G(χₗ, cosZ) / cosZ, 20.0) # L_H/L
+  f_sun = cal_fsun(dLAI, Kb, Ω)
   f_sha = 1 .- f_sun
-  # laisun = (1 - exp(-Kb * lai * Ω)) / Kb
-  # laisha = lai - laisun
 
-  τb_cum = cal_τb_cum(Kb, Ω, dLAI)
-  τb = cal_τb(Kb, Ω, dLAI)
-  τd = cal_τd(χₗ, Ω, dLAI)
+  τb_cum = cal_τb_cum(dLAI, Kb, Ω)
+  τb = cal_τb(dLAI, Kb, Ω)
+  τd = cal_τd(dLAI, χₗ, Ω)
 
   tridiag = TriDiagonal{T}(; n=2 * (nlayer + 1))
-
   build_tridiag_shortwave!(
-    tridiag, nlayer, τd, τb, τb_cum, 
-    Rs_dir, Rs_dif, 
-    ρ, τ_l,
-    ρ_soil_dir, ρ_soil_dif
+    tridiag, nlayer, Rs_dir, Rs_dif,
+    τd, τb, τb_cum, τl,
+    ρ, ρ_soil_dir, ρ_soil_dif
   )
   tridiagonal_solver!(tridiag)
 
@@ -62,18 +68,9 @@ function Norman_Shortwave(
   I_dn = zeros(nlayer + 1) # Downward diffuse solar flux onto layer
   unpack_U_shortwave!(tridiag.u, I_up, I_dn; nlayer)
 
-  # --- Compute flux densities
-  # Absorbed direct beam and diffuse for ground (soil)
-  iv = 1
-  direct = Rs_dir * τb_cum[iv] * (1 - ρ_soil_dir)
-  diffuse = I_dn[iv] * (1 - ρ_soil_dif)
-  Rs_gound = direct + diffuse
-
   # Absorbed direct beam and diffuse for each leaf layer and sum
   # for all leaf layers
   Rs_veg = T(0)
-  Rs_veg_sun = T(0)
-  Rs_veg_sha = T(0)
   Rs_sun = zeros(nlayer + 1)
   Rs_sha = zeros(nlayer + 1)
 
@@ -92,33 +89,24 @@ function Norman_Shortwave(
     Rs_sha[iv] = shade / (f_sha[iv] * dLAI[iv])
 
     # Sum fluxes over all leaf layers
-    Rs_veg = Rs_veg + (direct + diffuse)
-    Rs_veg_sun = Rs_veg_sun + sun
-    Rs_veg_sha = Rs_veg_sha + shade
+    Rs_veg = Rs_veg + (direct + diffuse) # note: 这是单位地面，和单位lai不同
   end
-
-  # --- Albedo
-  incoming = Rs_dir + Rs_dif
-  reflected = I_up[nlayer+1]
-  albcan = incoming > 0 ? reflected / incoming : 0
+  # Rs_veg_sun = sum(Rs_sun)
+  # Rs_veg_sha = sum(Rs_sha)
+  direct = Rs_dir * τb_cum[1] * (1 - ρ_soil_dir)
+  diffuse = I_dn[1] * (1 - ρ_soil_dif)
+  Rs_gound = direct + diffuse
 
   # --- Conservation check
   # Total radiation balance: absorbed = incoming - outgoing
-  suminc = Rs_dir + Rs_dif
-  sumref = albcan * (Rs_dir + Rs_dif)
-  sumabs = suminc - sumref
+  incoming = Rs_dir + Rs_dif
+  reflected = I_up[nlayer+1]
+  sumabs = incoming - reflected
 
   err = sumabs - (Rs_veg + Rs_gound)
   if abs(err) > 1e-03
     println("err = %15.5f\n", err)
     error("NormanRadiation: Total solar conservation error")
-  end
-
-  # Sunlit and shaded absorption
-  err = (Rs_veg_sun + Rs_veg_sha) - Rs_veg
-  if abs(err) > 1e-03
-    println("err = %15.5f\n", err)
-    error("NormanRadiation: Sunlit/shade solar conservation error")
   end
 
   (;
